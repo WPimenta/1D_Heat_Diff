@@ -3,7 +3,6 @@
 
 #define NUMPOINTS 10
 #define ENDTIME 10
-#define DX 0.1
 #define DT 0.1
 
 void InitialiseToZero(float* array, int size);
@@ -21,9 +20,12 @@ int main(void)
 	InitialiseToZero(nextPoints, NUMPOINTS);
 
 	//make the end points some random values
-	currentPoints[0] = 5.0;
-	currentPoints[NUMPOINTS-1] = 5.0;
+	for (int index = 0; index < NUMPOINTS; index++)
+	{
+		currentPoints[index] = rand()%10000;
+	}
 	
+	double DX = currentPoints[1] - currentPoints[0];
 	DiffuseHeat(currentPoints, nextPoints, NUMPOINTS, DX, DT, ENDTIME);
 	return 1;
 }
@@ -46,7 +48,7 @@ void DiffuseHeat(float* currentPoints, float* nextPoints, int size, double dx, d
 		PrintPoints(currentPoints, size, currentTime);
 		for (int index = 1; index < size-1; index++)
 		{
-			nextPoints[index] = currentPoints[index] + (dt/(dx*dx))*(currentPoints[index+1] - (2*(currentPoints[index] + currentPoints[index-1])));
+			nextPoints[index] = currentPoints[index] + (dt/dx*dx)*(currentPoints[index+1] - (2*currentPoints[index]) + currentPoints[index-1]);
 		}
 		currentPoints = nextPoints;
 		currentPoints[0] = initialStart;
@@ -58,10 +60,10 @@ void DiffuseHeat(float* currentPoints, float* nextPoints, int size, double dx, d
 
 void PrintPoints(float* array, int size, double currentTime)
 {
-	printf("The array values at time t=%f are:\n", currentTime);
+	printf("The array values at time t=%0.1f are:\n", currentTime);
 	for (int index = 0; index < size; index++)
 	{
-		printf("%f ", array[index]);
+		printf("%0.2f ", array[index]);
 	}
 	printf("\n\n");
 }
