@@ -2,3 +2,8 @@ This file will contain any references which we can cite when we write up the rep
 
 
 http://hplgit.github.io/num-methods-for-PDEs/doc/pub/diffu/sphinx/._main_diffu001.html
+
+
+
+***This is example code for summing an array with mpi***
+https://computing.llnl.gov/tutorials/mpi/samples/C/mpi_array.c
