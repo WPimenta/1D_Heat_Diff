@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
 #define CUDA_INPUT "input.txt"
-#define CUDA_OUTPUT "output.txt"
+#define CUDA_OUTPUT "cuda_output.txt"
 
 int NUMPOINTS;
 double ENDTIME;
