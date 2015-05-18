@@ -13,7 +13,7 @@
 //Function declarations.
 //
 void InitRod(float* array, int size, float roomTemp, double appliedHeat);
-void DiffuseHeat(float* currentPoints, int size, double apliedHeat, float first, float last, double dx, double dt);
+void DiffuseHeat(float* in, float* currentPoints, int size, double apliedHeat, double dx, double dt);
 void PrintPoints(float* array, int size, double currentTime);
 
 int main()
@@ -36,11 +36,10 @@ int main()
 
 	if(w_rank == 0)
 	{
-		float first;
-		float last;
 		srand(time(NULL));
 		currentPoints = (float*)malloc(NUMPOINTS*sizeof(float));
-		appliedHeat = rand()&100;
+		appliedHeat = rand()%100;
+		printf("%f is applied heat\n",appliedHeat);
 		InitRod(currentPoints, NUMPOINTS, ROOM_TEMP, appliedHeat);
 		dx = currentPoints[1] - currentPoints[0];
 		n = NUMPOINTS;
@@ -55,37 +54,12 @@ int main()
 	MPI_Bcast(&n, 1, MPI_INT, 0 , MPI_COMM_WORLD);
 	MPI_Bcast(&dx, 1, MPI_FLOAT, 0, MPI_COMM_WORLD);
 	MPI_Bcast(&dt, 1, MPI_FLOAT, 0, MPI_COMM_WORLD);
-
+	MPI_Bcast(&currentPoints, NUMPOINTS, MPI_FLOAT, 0, MPI_COMM_WORLD);
 	float *process_recv_buffer = (float*)malloc(chunk_size*sizeof(float));
-	float first;
-	float last;
 	while(currentTime < ENDTIME)
 	{
-		if(w_rank==0)
-		{
-			first = currentPoints[0];
-			last = currentPoints[chunk_size];
-		}
-		if(w_rank-1 >= 1)
-		{
-			MPI_Send(&currentPoints[w_rank*chunk_size], 1, MPI_FLOAT, w_rank-1, w_rank, MPI_COMM_WORLD);
-		}
-		if(w_rank + 1 <= w_size)
-		{
-			MPI_Send(&currentPoints[w_rank*chunk_size-1+chunk_size], 1, MPI_FLOAT, w_rank+1, w_rank, MPI_COMM_WORLD);
-		}
-		if(w_rank-1 >= 1)
-		{
-			MPI_Recv(&first, 1, MPI_FLOAT,w_rank, w_rank-1, MPI_COMM_WORLD, &status );
-		}
-		if(w_rank + 1 <= w_size)
-		{
-			MPI_Recv(&last, 1, MPI_FLOAT, w_rank, w_rank+1, MPI_COMM_WORLD, &status);
-		}
-
 		MPI_Scatter(currentPoints, chunk_size, MPI_FLOAT, process_recv_buffer, chunk_size, MPI_FLOAT, 0, MPI_COMM_WORLD);
-
-		DiffuseHeat(process_recv_buffer, chunk_size, appliedHeat, first, last, dx, dt);
+		DiffuseHeat(process_recv_buffer, currentPoints, chunk_size, appliedHeat,dx, dt);
 		currentTime += dt;
 		printf("%f is dt\n", currentTime);
 	}
@@ -107,18 +81,17 @@ void InitRod(float* array, int size, float roomTemp, double appliedHeat)
 }
 
 
-void DiffuseHeat(float* currentPoints, int size, double appliedHeat,float first, float last, double dx, double dt)
+void DiffuseHeat(float* in, float* currentPoints, int size, double appliedHeat,double dx, double dt)
 {
 	//create temporary storage array
-	int rank;
+	int w_rank;
+	MPI_Comm_rank(MPI_COMM_WORLD, &w_rank);
 	int index;
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+	printf("%f is the first element of CurrentPOints from %d\n", currentPoints[0], w_rank);
 	for(index = 1; index < size-1; index++)
 	{
-		printf("Process #%d receives %f, %f, %f, %f \n",rank, currentPoints[0], currentPoints[1], currentPoints[2], dt);
 		currentPoints[index] = currentPoints[index] + (dt/dx*dx)*(currentPoints[index+1] - (2*currentPoints[index]) + currentPoints[index-1]);
 	}
-	printf("\n\n\nApplied Heat is %f\n\n\n", appliedHeat);
 	//call merge
 }
 
