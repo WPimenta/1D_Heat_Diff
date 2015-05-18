@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #define NUMPOINTS 10
-#define ENDTIME 10
+#define ENDTIME 5
 #define DT 0.1
 
 void InitialiseToZero(float* array, int size);
@@ -20,10 +20,10 @@ int main(void)
 	InitialiseToZero(nextPoints, NUMPOINTS);
 
 	//make the end points some random values
-	for (int index = 0; index < NUMPOINTS; index++)
-	{
-		currentPoints[index] = rand()%100;
-	}
+	double randomValue = rand()%99;
+	printf("%f\n", randomValue);
+	currentPoints[0] = randomValue;
+	currentPoints[NUMPOINTS-1] = randomValue;
 	
 	double DX = currentPoints[1] - currentPoints[0];
 	DiffuseHeat(currentPoints, nextPoints, NUMPOINTS, DX, DT, ENDTIME);
@@ -32,7 +32,8 @@ int main(void)
 
 void InitialiseToZero(float* array, int size)
 {
-	for (int index = 0; index < size; index++)
+	int index;
+	for (index = 0; index < size; index++)
 	{
 		array[index] = 0;
 	}
@@ -40,20 +41,20 @@ void InitialiseToZero(float* array, int size)
 
 void DiffuseHeat(float* currentPoints, float* nextPoints, int size, double dx, double dt, double endTime)
 {
-	float initialStart = currentPoints[0];
-	float initialEnd = currentPoints[size-1];
 	double currentTime = 0.0;
+	int index;
 	while (currentTime < endTime)
 	{
-		PrintPoints(currentPoints, size, currentTime);
-		for (int index = 1; index < size-1; index++)
+		for (index = 1; index < size-1; index++)
 		{
-			nextPoints[index] = currentPoints[index] + (dt/dx*dx)*(currentPoints[index+1] - (2*currentPoints[index]) + currentPoints[index-1]);
+			nextPoints[index] = currentPoints[index] + 0.25*(currentPoints[index+1] - (2*currentPoints[index]) + currentPoints[index-1]);
 		}
-		currentPoints = nextPoints;
-		currentPoints[0] = initialStart;
-		currentPoints[size-1] = initialEnd;
+		for (index = 1; index < size-1; index++)
+		{
+			currentPoints[index] = nextPoints[index];
+		}
 		currentTime += dt;
+		PrintPoints(currentPoints, size, currentTime);
 	}
 	PrintPoints(currentPoints, size, currentTime);
 }
@@ -61,7 +62,8 @@ void DiffuseHeat(float* currentPoints, float* nextPoints, int size, double dx, d
 void PrintPoints(float* array, int size, double currentTime)
 {
 	printf("The array values at time t=%0.1f are:\n", currentTime);
-	for (int index = 0; index < size; index++)
+	int index;
+	for (index = 0; index < size; index++)
 	{
 		printf("%0.2f ", array[index]);
 	}
