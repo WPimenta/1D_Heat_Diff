@@ -4,16 +4,15 @@
 #include <time.h>
 #include <mpi.h>
 #include <stdio.h>
-#define NUMPOINTS 10
+#define NUMPOINTS 12
 #define ENDTIME 1
 #define DT 0.1
-#define NUM_ELEMENTS 3
 #define ROOM_TEMP 0
 
 //Function declarations.
 //
 void InitRod(float* array, int size, float roomTemp, double appliedHeat);
-void DiffuseHeat(float* in, float* currentPoints, int size, double apliedHeat, double dx, double dt);
+float* DiffuseHeat(float* currentPoints, int size, float apliedHeat, double dx, double dt, float first, float last, int rank);
 void PrintPoints(float* array, int size, double currentTime);
 
 int main()
@@ -21,7 +20,6 @@ int main()
 	double currentTime = 0.0;
 	int n;
 	int chunk_size;
-	float* currentPoints = NULL;
 	float appliedHeat;
 	int w_rank;
 	int w_size;
@@ -34,17 +32,22 @@ int main()
 	MPI_Comm_rank(MPI_COMM_WORLD, &w_rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &w_size);
 
+
+	float* currentPoints = NULL;
+
 	if(w_rank == 0)
 	{
+		float first;
+		float last;
 		srand(time(NULL));
 		currentPoints = (float*)malloc(NUMPOINTS*sizeof(float));
-		appliedHeat = rand()%100;
-		printf("%f is applied heat\n",appliedHeat);
+		appliedHeat = rand()&100+1;
 		InitRod(currentPoints, NUMPOINTS, ROOM_TEMP, appliedHeat);
 		dx = currentPoints[1] - currentPoints[0];
 		n = NUMPOINTS;
 		dt = DT;
 		chunk_size = n/w_size;
+		printf(" Chunk == %d\n\n", chunk_size);
 	}
 
 	MPI_Barrier(MPI_COMM_WORLD);
@@ -54,12 +57,48 @@ int main()
 	MPI_Bcast(&n, 1, MPI_INT, 0 , MPI_COMM_WORLD);
 	MPI_Bcast(&dx, 1, MPI_FLOAT, 0, MPI_COMM_WORLD);
 	MPI_Bcast(&dt, 1, MPI_FLOAT, 0, MPI_COMM_WORLD);
-	MPI_Bcast(&currentPoints, NUMPOINTS, MPI_FLOAT, 0, MPI_COMM_WORLD);
-	float *process_recv_buffer = (float*)malloc(chunk_size*sizeof(float));
+	MPI_Bcast(&chunk_size,1,MPI_INT,0,MPI_COMM_WORLD);
+
+	float *process_recv_buffer = (float*)malloc((chunk_size)*sizeof(float));
+	float first; float last;
+	int tag;
+
 	while(currentTime < ENDTIME)
 	{
 		MPI_Scatter(currentPoints, chunk_size, MPI_FLOAT, process_recv_buffer, chunk_size, MPI_FLOAT, 0, MPI_COMM_WORLD);
-		DiffuseHeat(process_recv_buffer, currentPoints, chunk_size, appliedHeat,dx, dt);
+
+		if(w_rank ==0)
+		{
+			first = process_recv_buffer[0];
+		}
+		if(w_rank == w_size-1)
+		{
+			last = process_recv_buffer[chunk_size-1];
+		}
+		if(w_rank > 0)
+		{
+			tag = 1;
+			MPI_Send(&process_recv_buffer[0], 1, MPI_FLOAT, w_rank-1, tag, MPI_COMM_WORLD);
+		}
+		if(w_rank < w_size-1)
+                {
+			tag = 1;
+                        MPI_Recv(&last, 1, MPI_FLOAT, w_rank+1, tag, MPI_COMM_WORLD, &status);
+		}
+		if(w_rank < w_size-1)
+		{
+			tag = 2;
+			MPI_Send(&process_recv_buffer[chunk_size-1], 1, MPI_FLOAT, w_rank+1, tag, MPI_COMM_WORLD);
+		}
+		if(w_rank > 0)
+		{
+			tag = 2;
+			MPI_Recv(&first, 1, MPI_FLOAT, w_rank-1, tag, MPI_COMM_WORLD, &status );
+		}
+		printf("%d\t%f\t%f\n",w_rank,first,last);
+		break;
+
+		DiffuseHeat(process_recv_buffer, chunk_size, appliedHeat, dx, dt, first, last, w_rank);
 		currentTime += dt;
 		printf("%f is dt\n", currentTime);
 	}
@@ -81,18 +120,61 @@ void InitRod(float* array, int size, float roomTemp, double appliedHeat)
 }
 
 
-void DiffuseHeat(float* in, float* currentPoints, int size, double appliedHeat,double dx, double dt)
+float* DiffuseHeat(float* currentPoints, int size, float appliedHeat, double dx, double dt, float first, float last, int rank)
 {
-	//create temporary storage array
-	int w_rank;
-	MPI_Comm_rank(MPI_COMM_WORLD, &w_rank);
 	int index;
-	printf("%f is the first element of CurrentPOints from %d\n", currentPoints[0], w_rank);
-	for(index = 1; index < size-1; index++)
+	int F = dt/(dx*dx);
+	if(rank==0)
 	{
-		currentPoints[index] = currentPoints[index] + (dt/dx*dx)*(currentPoints[index+1] - (2*currentPoints[index]) + currentPoints[index-1]);
+		result[0] = first;
+		for(index = 1;index < size; index ++)
+		{
+			if(index == size-1)
+			{
+				result[index] = currentPoints[index] + 0.25*(last - (2*currentPoints[index]) + currentPoints[index-1]);
+			}
+			else
+			{
+				result[index] = currentPoints[index] + 0.25*(currentPoints[index+1] - (2*currentPoints[index]) + currentPoints[index-1]);
+			}
+		}
 	}
-	//call merge
+	else if(rank == size-1)
+	{
+		result[size-1] = last;
+                for(index = 0;index < size-1; index ++)
+                {
+                        if(index == 0)
+                        {
+                                result[index] = currentPoints[index] + 0.25*(currentPoints[index+1] - (2*currentPoints[index]) + first);
+                        }
+                        else
+                        {
+                                result[index] = currentPoints[index] + 0.25*(currentPoints[index+1] - (2*currentPoints[index]) + currentPoints[index-1]);
+                        }
+                }
+
+	}
+	else
+	{
+		for(index = 0; index < size; index++)
+		{
+			if(index == 0)
+                        {
+                                result[index] = currentPoints[index] + 0.25*(currentPoints[index+1] - (2*currentPoints[index]) + first);
+                        }
+                        else if (index == size - 1)
+                        {
+                                result[index] = currentPoints[index] + 0.25*(last - (2*currentPoints[index]) + currentPoints[index-1]);
+                        }
+			else
+			{
+                                result[index] = currentPoints[index] + 0.25*(currentPoints[index+1] - (2*currentPoints[index]) + currentPoints[index-1]);
+			}
+		}
+
+	}
+	return result;
 }
 
 
