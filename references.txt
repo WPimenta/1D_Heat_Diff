@@ -7,3 +7,9 @@ http://hplgit.github.io/num-methods-for-PDEs/doc/pub/diffu/sphinx/._main_diffu00
 
 ***This is example code for summing an array with mpi***
 https://computing.llnl.gov/tutorials/mpi/samples/C/mpi_array.c
+
+Reading from a textfile:
+http://www.cquestions.com/2010/06/how-to-read-text-file-by-c-program.html
+
+Converting a string to a double:
+http://www.cplusplus.com/reference/cstdlib/atof/
