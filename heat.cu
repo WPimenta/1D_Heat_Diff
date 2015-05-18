@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <cuda_runtime.h>
-#define CUDA_INPUT "cuda_input.txt"
-#define CUDA_OUTPUT "cuda_output.txt"
+#define CUDA_INPUT "input.txt"
+#define CUDA_OUTPUT "output.txt"
 
 int NUMPOINTS;
 double ENDTIME;
@@ -72,9 +72,8 @@ int main(void)
 		InitialiseToZero(currentPoints);
 		InitialiseToZero(nextPoints);
 
-		float randomValue = ENDVALUES;
 		currentPoints[0] = ENDVALUES;
-		currentPoints[NUMPOINTS-1] = randomValue;
+		currentPoints[NUMPOINTS-1] = ENDVALUES;
 		cudaMemcpy(deviceCurrentPoints, currentPoints, NUMPOINTS*sizeof(float), cudaMemcpyHostToDevice);
 		cudaMemcpy(deviceNextPoints, nextPoints, NUMPOINTS*sizeof(float), cudaMemcpyHostToDevice);
 		const size_t blockSize = NUMPOINTS-2;
