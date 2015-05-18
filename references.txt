@@ -13,3 +13,6 @@ http://www.cquestions.com/2010/06/how-to-read-text-file-by-c-program.html
 
 Converting a string to a double:
 http://www.cplusplus.com/reference/cstdlib/atof/
+
+Writing to a textfile:
+http://stackoverflow.com/questions/11573974/write-to-txt-file
