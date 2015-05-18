@@ -3,8 +3,8 @@
 #include <cuda_runtime.h>
 
 #define NUMPOINTS 10
-#define ENDTIME 10
-#define DT 0.1
+#define ENDTIME 5
+#define DT 1
 
 void InitialiseToZero(float* array, int size);
 void DiffuseHeatCPU(float* currentPoints, float* nextPoints, int size, double dx, double dt, double endTime);
@@ -12,23 +12,33 @@ void PrintPoints(float* array, int size, double currentTime);
 
 __global__ void DiffuseHeat(float* currentPoints, float* nextPoints, int size, double dx, double dt, double endTime)
 {
-	unsigned int index = (threadIdx.x + blockDim.x * blockIdx.x) + 1;
+	unsigned int threadIndex = (threadIdx.x + blockDim.x * blockIdx.x) + 1;
 	__shared__ double currentTime;
 	currentTime = 0.0;
 	while (currentTime < endTime)
-	{	
-		nextPoints[index] = currentPoints[index] + (dt/dx*dx)*(currentPoints[index+1] - (2*currentPoints[index]) + currentPoints[index-1]);				
-		__syncthreads();
-		currentPoints[index] = nextPoints[index];
-		if (index == 1)	
+	{		
+		if (threadIndex == 1)	
 		{
+			printf("The current points are:\n");
+			for (int index = 0; index < size; index++)
+			{
+				printf("%0.2f ", currentPoints[index]);
+			}
+			printf("\n");		
+		}
+		nextPoints[threadIndex] = currentPoints[threadIndex] + (dt/dx*dx)*(currentPoints[threadIndex+1] - (2*currentPoints[threadIndex]) + currentPoints[threadIndex-1]);				
+		__syncthreads();
+		printf("Thread %d: %f\n", threadIndex, nextPoints[threadIndex]);
+		currentPoints[threadIndex] = nextPoints[threadIndex];
+		if (threadIndex == 1)	
+		{
+			currentTime += dt;
 			printf("The array values at time t=%0.1f are:\n", currentTime);
 			for (int index = 0; index < size; index++)
 			{
 				printf("%0.2f ", currentPoints[index]);
 			}
-			printf("\n\n");
-			currentTime += dt;
+			printf("\n\n");		
 		}
 		__syncthreads();
 	}
