@@ -4,9 +4,11 @@
 #define NUMPOINTS 10
 #define ENDTIME 5
 #define DT 0.1
+
 void InitialiseToZero(float* array, int size);
-void DiffuseHeatCPU(float* currentPoints, float* nextPoints, int size, double dx, double dt, double endTime);
-void PrintPoints(float* array, int size, double currentTime);
+__device__ void PrintPointsGPU(float* array, int size, double currentTime);
+void PrintPointsCPU(float* array, int size, double currentTime);
+
 __global__ void DiffuseHeat(float* currentPoints, float* nextPoints, int size, double dx, double dt, double endTime)
 {
 	unsigned int threadIndex = (threadIdx.x + blockDim.x * blockIdx.x) + 1;
@@ -14,18 +16,16 @@ __global__ void DiffuseHeat(float* currentPoints, float* nextPoints, int size, d
 	currentTime = 0.0;
 	while (currentTime < endTime)
 	{
+//		if (threadIndex == 1)
+//		{
+//			PrintPointsGPU(currentPoints, NUMPOINTS, currentTime);
+//		}
 		nextPoints[threadIndex] = currentPoints[threadIndex] + 0.25*(currentPoints[threadIndex+1] - (2*currentPoints[threadIndex]) + currentPoints[threadIndex-1]);
 		__syncthreads();
 		currentPoints[threadIndex] = nextPoints[threadIndex];
 		if (threadIndex == 1)
 		{
 			currentTime += dt;
-			printf("The array values at time t=%0.1f are:\n", currentTime);
-			for (int index = 0; index < size; index++)
-			{
-				printf("%0.2f ", currentPoints[index]);
-			}
-			printf("\n\n");
 		}
 		__syncthreads();
 	}
@@ -60,7 +60,7 @@ int main(void)
 	double DX = currentPoints[1] - currentPoints[0];
 	DiffuseHeat<<<gridSize, blockSize>>>(deviceCurrentPoints, deviceNextPoints, NUMPOINTS, DX, DT, ENDTIME);
 	cudaMemcpy(resultPoints, deviceCurrentPoints, NUMPOINTS*sizeof(float), cudaMemcpyDeviceToHost);
-	PrintPoints(resultPoints, NUMPOINTS, ENDTIME);
+	PrintPointsCPU(resultPoints, NUMPOINTS, ENDTIME);
 	return 0;
 }
 void InitialiseToZero(float* array, int size)
@@ -70,26 +70,18 @@ void InitialiseToZero(float* array, int size)
 		array[index] = 0;
 	}
 }
-void DiffuseHeatCPU(float* currentPoints, float* nextPoints, int size, double dx, double dt, double endTime)
+
+__device__ void PrintPointsGPU(float* array, int size, double currentTime)
 {
-	float initialStart = currentPoints[0];
-	float initialEnd = currentPoints[size-1];
-	double currentTime = 0.0;
-	while (currentTime < endTime)
+	printf("The array values at time t=%0.1f are:\n", currentTime);
+	for (int index = 0; index < size; index++)
 	{
-		PrintPoints(currentPoints, size, currentTime);
-		for (int index = 1; index < size-1; index++)
-		{
-			nextPoints[index] = currentPoints[index] + (dt/dx*dx)*(currentPoints[index+1] - (2*currentPoints[index]) + currentPoints[index-1]);
-		}
-		currentPoints = nextPoints;
-		currentPoints[0] = initialStart;
-		currentPoints[size-1] = initialEnd;
-		currentTime += dt;
+		printf("%0.2f ", array[index]);
 	}
-	PrintPoints(currentPoints, size, currentTime);
+	printf("\n\n");
 }
-void PrintPoints(float* array, int size, double currentTime)
+
+void PrintPointsCPU(float* array, int size, double currentTime)
 {
 	printf("The array values at time t=%0.1f are:\n", currentTime);
 	for (int index = 0; index < size; index++)
