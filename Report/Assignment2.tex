@@ -1,0 +1,64 @@
+\documentclass[11pt,a4paper]{article}
+
+\newcommand{\hilighta}[1]{\colorbox{red}{#1}}
+\newcommand{\hilightb}[1]{\colorbox{green}{#1}}
+\newcommand{\hilightc}[1]{\colorbox{blue}{#1}}
+\newcommand{\hilightd}[1]{\colorbox{cyan}{#1}}
+\newcommand{\hilighte}[1]{\colorbox{yellow}{#1}}
+\newcommand{\hilightf}[1]{\colorbox{magenta}{#1}}
+
+%\usepackage{witsa4}
+
+\textheight 247mm
+     
+\oddsidemargin 0pt
+\evensidemargin \oddsidemargin
+\marginparwidth 0.5in
+     
+\textwidth 16cm
+\advance\voffset by  -15mm
+
+\usepackage{graphicx}
+\usepackage{pdfpages}
+\usepackage{times}
+\usepackage{longtable}
+
+\usepackage{url}
+\usepackage{natbib} \input{natbib-add}
+\bibliographystyle{named-wits}
+\bibpunct{[}{]}{;}{a}{}{,}  % to get correct punctuation for bibliography
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{color}
+\author{David Kroukamp 536705\\and\\Wade Pimenta 544147}
+\title{HPC Assignment 2 - 1D Heat Diffusion}
+\begin{document}
+
+
+\null  % Empty line
+\nointerlineskip  % No skip for prev line
+\vfill
+\let\snewpage \newpage
+\let\newpage \relax
+\begin{center}
+	\includegraphics[width=6cm]{logo.png}
+\end{center}
+
+\maketitle
+\let \newpage \snewpage
+\vfill 
+\break % page break
+
+\newpage
+\tableofcontents
+\newpage
+\section{Section A - }
+
+
+\newpage
+\bibliography{references}\addcontentsline{toc}{section}{References}
+
+\end{document}
