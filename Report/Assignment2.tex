@@ -55,8 +55,116 @@
 \newpage
 \tableofcontents
 \newpage
-\section{Section A - }
+\section{Serial Code}
+\subsection{Description of Functions}
+\subsubsection{InitialiseToZero}
+\begin{itemize}
+	\item[Input] \hfill\\
+	An array of floats
+	\item[Purpose] \hfill\\
+	Initialises all values in the array to zero.
+\end{itemize}
 
+\subsubsection{DiffuseHeat}
+\begin{itemize}
+	\item[Input] \hfill\\
+	Initial array of temperatures along the pipe, an empty array to be used for temporarily storing the next set of temperatures at each time step, the heat being applied, the time steps, and the time which we want to stop at.
+	\item[Purpose] \hfill\\
+	Computes the resultant heats for the pipe after the given time has elapsed by evaluating the points at the given time steps.
+\end{itemize}
+
+\subsubsection{PrintPoints}
+\begin{itemize}
+	\item[Input] \hfill\\
+	The array to be printed and the current time.
+	\item[Purpose] \hfill\\
+	Prints out the elements of the given array. The current time is used as an input to give a title to the output.
+\end{itemize}
+
+\subsubsection{ProcessOutput}
+\begin{itemize}
+	\item[Input] \hfill\\
+	The array needing to be saved, the test case number, and the runtime.
+	\item[Purpose] \hfill\\
+	Saves the results for the given test case. This consists of the runtime for the given test case, and (if a reasonable amount of points) the resultant array.
+\end{itemize}
+
+\subsubsection{main}
+\begin{itemize}
+	\item[Input] \hfill\\
+	None.
+	\item[Purpose] \hfill\\
+	The heart of the serial program.\\
+	While the end of the input text file is not encountered, the following takes place:\\
+	First the necessary values are read from the input text file. These are: the number of points, the end time, the time steps, and the temperatures of the endpoints.\\
+	The necessary arrays are then initialised and the endpoints of the current temperatures are set to the specified temperatures.\\
+	The change in temperature is calculated.\\
+	The clock is set up, and the DiffuseHeat method is run.\\
+	The final runtime is calculated and the output is then processed for the test case.
+\end{itemize}
+
+\subsection{Results}
+
+
+\section{CUDA Code}
+\subsection{Description of Functions}
+\subsubsection{InitialiseToZero}
+\begin{itemize}
+	\item[Input] \hfill\\
+	An array of floats.
+	\item[Purpose] \hfill\\
+	Initialises all values in the array to zero.
+\end{itemize}
+
+\subsubsection{PrintPointsGPU}
+\begin{itemize}
+	\item[Input] \hfill\\
+	An array, the size of the array, and the current time.
+	\item[Purpose] \hfill\\
+	Prints out the elements of the given array. The current time is used as an input to give a title to the output. (This method was used to easily test the output while the CUDA portion of the code was being executed.)
+\end{itemize}
+
+\subsubsection{PrintPointsCPU}
+\begin{itemize}
+	\item[Input] \hfill\\
+	An array and the current time.
+	\item[Purpose] \hfill\\
+	Prints out the elements of the given array. The current time is used as an input to give a title to the output.
+\end{itemize}
+
+\subsubsection{ProcessOutput}
+\begin{itemize}
+	\item[Input] \hfill\\
+	The array needing to be saved, the test case number, and the runtime.
+	\item[Purpose] \hfill\\
+	Saves the results for the given test case. This consists of the runtime for the given test case, and (if a reasonable amount of points) the resultant array.
+\end{itemize}
+
+\subsubsection{DiffuseHeat}
+\begin{itemize}
+	\item[Input] \hfill\\
+	Initial array of temperatures along the pipe, an empty array to be used for temporarily storing the next set of temperatures at each time step, the number of points, the heat being applied, the time steps, and the time which we want to stop at.
+	\item[Purpose] \hfill\\
+	Uses CUDA to compute the values for the temperatures along the pipe at each time step. This is done by having each thread calculate the temperature value at its respective index. The current temperatures are then updated to be the calculated temperatures and the current time is incremented by the time step value.
+\end{itemize}
+
+\subsubsection{main}
+\begin{itemize}
+	\item[Input] \hfill\\
+	None.
+	\item[Purpose] \hfill\\
+	The heart of the program.\\
+	The program first deletes the output file (if it exists). This is done because we don't want to append to the output file; we only want output that corresponds to the given input.\\
+	While the end of the input text file is not encountered, the following takes place:\\
+	First the necessary values are read from the input text file. These are: the number of points, the end time, the time steps, and the temperatures of the endpoints.\\
+	The necessary arrays are then initialised for both the host and device arrays and the endpoints of the current temperatures are set to the specified temperatures.\\
+	The needed arrays are then copied to the device and the block size and grid size are calculated. (NOTE: NUMPOINTS-2 is used because we don't need to calculate the temperatures of index 0 and the final index.)
+	The change in temperature is calculated.\\
+	The events needed to time the method are then declared, and the DiffuseHeat method is run.\\
+	The final runtime is calculated, the resultant array is then copied to the host result and the output is then processed for the test case.
+\end{itemize}
+
+\subsection{Results}
 
 \newpage
 \bibliography{references}\addcontentsline{toc}{section}{References}
