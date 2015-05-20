@@ -18,7 +18,6 @@ void ProcessOutput(float* array, int testCase, float time);
 
 int main(void)
 {
-	printf("here");
 	remove(SERIAL_OUTPUT);
 	int testCase = 1;
 	char str[70];
