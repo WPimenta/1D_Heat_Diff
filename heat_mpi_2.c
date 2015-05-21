@@ -50,10 +50,7 @@ int main()
 	int EoF = 0;
 	int testCase = 1;
 	char str[70];
-	FILE *p;
-	float* currentPoints_serial = NULL;
-	float* currentPoints_parallel = NULL;
-	float* result = NULL;
+	FILE *p;	
 
 	if(w_rank == 0)
 	{
@@ -94,10 +91,13 @@ int main()
 
 		if(w_rank == 0)
 		{
+			float* currentPoints_serial = NULL;
 			currentPoints_parallel = (float*)malloc(NUMPOINTS*sizeof(float));
+			float* currentPoints_parallel = NULL;
 			currentPoints_serial = (float*)malloc(NUMPOINTS*sizeof(float));
+			float* result = NULL;
+			result = (float*)malloc(NUMPOINTS*sizeof(float));	
 			sTime = 0;
-			result = (float*)malloc(NUMPOINTS*sizeof(float));
 			clock_t start, end;
 			appliedHeat = ENDVALUES;
 			InitRod(currentPoints_parallel, NUMPOINTS, ROOM_TEMP, appliedHeat);
