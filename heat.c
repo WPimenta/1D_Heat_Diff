@@ -60,6 +60,8 @@ int main(void)
 
 		ProcessOutput(currentPoints, testCase, time);
 		testCase++;
+		free(currentPoints);
+		free(nextPoints);
 	}
 	return 1;
 }

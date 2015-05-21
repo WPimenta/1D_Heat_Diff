@@ -141,6 +141,11 @@ int main(void)
 		CheckResults(currentPoints, resultPoints);
 		
 		testCase++;
+		free(currentPoints);
+		free(nextPoints);
+		free(resultPoints);
+		cudaFree(deviceCurrentPoints);
+		cudaFree(deviceNextPoints);
 	}
 	fclose(p);
 	return 0;
