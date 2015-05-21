@@ -165,8 +165,44 @@
 \end{itemize}
 
 \subsubsection{DiffuseHeatCPU}
+Same as described in the serial version (in the previous section). It is in the parallel version to compare results and calculate speedup.
 
 \subsection{Results}
+\subsubsection{Input}
+\begin{itemize}
+	\item[The contents of the input file were as follows:] \hfill\\
+	12 5 0.1 500\\
+	120 5 0.1 500\\
+	1200 5 0.1 500\\
+	12000 5 0.1 500\\
+	120000 5 0.1 500\\
+	1200000 5 0.1 500\\
+	Each line represents a test case of the format [number of points] [end time] [time step] [applied heat]
+\end{itemize}
+\subsubsection{Output}
+\begin{itemize}
+	\item[The results after running the code on the input were as follows: (from cuda_output.txt):]
+	Runtime for test case 1 with 12 points:\\
+	0.065536\\
+	Resultant temperatures:\\
+	500.00 437.25 379.59 331.69 297.43 279.58 279.58 297.43 331.69 379.59 437.25 500.00\\
+	\\
+	Runtime for test case 2 with 120 points:\\
+	0.049120\\
+	\\
+	Runtime for test case 3 with 1200 points:\\
+	0.060416\\
+	\\
+	Runtime for test case 4 with 12000 points:\\
+	0.224256\\
+	\\
+	Runtime for test case 5 with 120000 points:\\
+	1.877984\\
+	\\
+	Runtime for test case 6 with 1200000 points:\\
+	18.647009\\
+	Note: the runtimes are calculated in milliseconds.
+\end{itemize}
 
 \newpage
 \bibliography{references}\addcontentsline{toc}{section}{References}
