@@ -1,38 +1,45 @@
-\documentclass[11pt,a4paper]{article}
-
-\newcommand{\hilighta}[1]{\colorbox{red}{#1}}
-\newcommand{\hilightb}[1]{\colorbox{green}{#1}}
-\newcommand{\hilightc}[1]{\colorbox{blue}{#1}}
-\newcommand{\hilightd}[1]{\colorbox{cyan}{#1}}
-\newcommand{\hilighte}[1]{\colorbox{yellow}{#1}}
-\newcommand{\hilightf}[1]{\colorbox{magenta}{#1}}
-
-%\usepackage{witsa4}
-
-\textheight 247mm
-     
-\oddsidemargin 0pt
-\evensidemargin \oddsidemargin
-\marginparwidth 0.5in
-     
-\textwidth 16cm
-\advance\voffset by  -15mm
-
+\documentclass{article}
 \usepackage{graphicx}
-\usepackage{pdfpages}
-\usepackage{times}
-\usepackage{longtable}
-
+\usepackage{amsmath}
+\usepackage{changepage}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{epsfig}
+\titlespacing*{\section}{0pt}{5.5ex plus 1ex minus .2ex}{4.3ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{5.5ex plus 1ex minus .2ex}{4.3ex plus .2ex}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1.3ex}
+\usepackage{listings}
+\usepackage{color}
 \usepackage{url}
 \usepackage{natbib} \input{natbib-add}
 \bibliographystyle{named-wits}
 \bibpunct{[}{]}{;}{a}{}{,}  % to get correct punctuation for bibliography
 
 \usepackage[utf8]{inputenc}
-\usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
-\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+	language=C,
+	aboveskip=3mm,
+	belowskip=3mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numbers=none,
+	numberstyle=\tiny\color{gray},
+	keywordstyle=\color{blue},
+	commentstyle=\color{dkgreen},
+	stringstyle=\color{mauve},
+	breaklines=true,
+	breakatwhitespace=true
+	tabsize=3
+}
 \author{David Kroukamp 536705\\and\\Wade Pimenta 544147}
 \title{HPC Assignment 2 - 1D Heat Diffusion}
 \begin{document}
@@ -55,12 +62,27 @@
 \newpage
 \tableofcontents
 \newpage
+
+\section{1D Heat Diffusion}
+\subsection{Description}
+1D heat diffusion is the diffusion of heat along an infinitely narrow pipe. Initially, the whole pipe is at a stable and fixed temperature; for clarity purposes, we set our pipes initial temperature to be zero. At the start (time 0), we set both ends to a specified temperature, which remains fixed through the computation. We then calculate how the temperatures change in the rest of the pipe over time. Mathematically, the problem is to solve a 1D differential equation representing heat diffusion:
+$$\frac{\delta u}{\delta t} = \frac{\delta^{2}u}{\delta x^{2}}$$
+Our approach is to discretize the problem space by representing $U$ by a one-dimensional array and computing values for a sequence of discrete time steps. Assume we have the values for $U$ at time step $k$ in an array $Uk$, then for the next time step $k + 1$ update the second array $Ukp1$ as
+$$Ukp1[i] = Uk[i] + \frac{dt}{dx \times dx}(Uk[i+1] - 2Uk[i] + Uk[i-1])$$,
+where $dt$ and $dx$ represents the intervals between discrete time steps and between discrete points respectively.\\
+We have solved this problem by implementing the update function above in a serial program, an MPI program, and a CUDA program.
+
+\subsection{The Update Function}
+The update function for 1D heat diffusion is $$Ukp1[i] = Uk[i] + \frac{dt}{dx \times dx}(Uk[i+1] - 2Uk[i] + Uk[i-1])$$.
+The issue we face when using this function was if $dx \times dx \geq dt$ then the values on our pipe would tend toward negative infinity. Upon further investigation, we found that the value of $\frac{dt}{dx \times dx} \leq \frac{1}{4}$ is optimal. \citep{HeatDiff} also mentions that $dx$ is not the interval between discrete points, but rather the difference in temperature between $Uk[0]$ and $Uk[1]$. Since we still has issue getting the equation to work correctly for certain values of $dt$ and $dx$, we decided to rather set $\frac{dt}{dx \times dx} = \frac{1}{4}$.
+
+\newpage
 \section{Serial Code}
 \subsection{Description of Functions}
 \subsubsection{InitialiseToZero}
 \begin{itemize}
 	\item[Input] \hfill\\
-	An array of floats
+	An array of floats.
 	\item[Purpose] \hfill\\
 	Initialises all values in the array to zero.
 \end{itemize}
@@ -103,9 +125,50 @@
 	The final runtime is calculated and the output is then processed for the test case.
 \end{itemize}
 
+\subsection{How to run the code}
+\begin{enumerate}
+	\item Open the terminal in the same location as heat.c
+	\item Type: gcc -std=c99 heat.c -o heat
+	\item Type: qsub serial\_pbs.pbs
+	\item To see if the program ran successfully, type: qstat
+	\item If the program ran successfully, to view the results, type: nano serial.log
+\end{enumerate}
+
 \subsection{Results}
+\subsubsection{Input}
+The contents of the input file were as follows:
+12 5 0.1 500\\
+120 5 0.1 500\\
+1200 5 0.1 500\\
+12000 5 0.1 500\\
+120000 5 0.1 500\\
+1200000 5 0.1 500\\
+Each line represents a test case of the format [number of points] [end time] [time step] [applied heat]
 
+\subsubsection{Output}
+The results after running the code on the input were as follows:\\
+Runtime for test case 1 with 12 points:\\
+0\\
+Resultant temperatures:\\
+500.00 437.25 379.59 331.69 297.43 279.58 279.58 297.43 331.69 379.59 437.25 500.00\\
+\\
+Runtime for test case 2 with 120 points:\\
+0\\
+\\
+Runtime for test case 3 with 1200 points:\\
+0\\
+\\
+Runtime for test case 4 with 12000 points:\\
+7\\
+\\
+Runtime for test case 5 with 120000 points:\\
+85\\
+\\
+Runtime for test case 6 with 1200000 points:\\
+846\\
+Note: the runtimes are calculated in milliseconds.
 
+\newpage
 \section{CUDA Code}
 \subsection{Description of Functions}
 \subsubsection{InitialiseToZero}
@@ -167,10 +230,18 @@
 \subsubsection{DiffuseHeatCPU}
 Same as described in the serial version (in the previous section). It is in the parallel version to compare results and calculate speedup.
 
+\subsection{How to run the code}
+\begin{enumerate}
+	\item Open the terminal in the same location as heat.cu
+	\item Type: nvcc heat.cu -o heat\_cuda
+	\item Type: qsub cuda\_pbs.pbs
+	\item To see if the program ran successfully, type: qstat
+	\item If the program ran successfully, to view the results, type: nano cuda.log
+\end{enumerate}
+
 \subsection{Results}
 \subsubsection{Input}
-\begin{itemize}
-	\item[The contents of the input file were as follows:] \hfill\\
+	The contents of the input file were as follows:
 	12 5 0.1 500\\
 	120 5 0.1 500\\
 	1200 5 0.1 500\\
@@ -178,10 +249,9 @@ Same as described in the serial version (in the previous section). It is in the 
 	120000 5 0.1 500\\
 	1200000 5 0.1 500\\
 	Each line represents a test case of the format [number of points] [end time] [time step] [applied heat]
-\end{itemize}
+
 \subsubsection{Output}
-\begin{itemize}
-	\item[The results after running the code on the input were as follows: (from cuda_output.txt):]
+	The results after running the code on the input were as follows:\\
 	Runtime for test case 1 with 12 points:\\
 	0.065536\\
 	Resultant temperatures:\\
@@ -202,7 +272,13 @@ Same as described in the serial version (in the previous section). It is in the 
 	Runtime for test case 6 with 1200000 points:\\
 	18.647009\\
 	Note: the runtimes are calculated in milliseconds.
-\end{itemize}
+
+\newpage
+\section{Adapted Code}
+We used the following resources for help with certain aspects of our code:\\
+\citep{ArrayMPI} - An example on summing up an array using MPI in C.\\
+\citep{ReadTxt} - An example on reading from a text file.\\
+\citep{StringToDouble} - An example on converting a string to a double.\\
 
 \newpage
 \bibliography{references}\addcontentsline{toc}{section}{References}

@@ -1,3 +1,29 @@
 \begin{thebibliography}{}
 
+\bibitem[\protect\citeauthoryear{Arr}{}]{ArrayMPI}
+{\em MPI Example - Array Assignment - C Version}.
+\newblock \url{https://computing.llnl.gov/tutorials/mpi/samples/C/mpi_array.c}.
+\newblock Accessed: 2014-05-18.
+
+
+\bibitem[\protect\citeauthoryear{Hea}{}]{HeatDiff}
+{\em The 1D diffusion equation}.
+\newblock
+  \url{http://hplgit.github.io/num-methods-for-PDEs/doc/pub/diffu/sphinx/._main_diffu001.html}.
+\newblock Accessed: 2014-05-15.
+
+
+\bibitem[\protect\citeauthoryear{Rea}{}]{ReadTxt}
+{\em How to read a text file by c program}.
+\newblock
+  \url{http://www.cquestions.com/2010/06/how-to-read-text-file-by-c-program.html}.
+\newblock Accessed: 2014-05-18.
+
+
+\bibitem[\protect\citeauthoryear{Str}{}]{StringToDouble}
+{\em Convert string to double}.
+\newblock \url{http://www.cplusplus.com/reference/cstdlib/atof/}.
+\newblock Accessed: 2014-05-18.
+
+
 \end{thebibliography}

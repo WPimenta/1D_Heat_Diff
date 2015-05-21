@@ -10,7 +10,7 @@
 ### Queue name (batch)
 #PBS -q batch
 ### Request 1 node
-#PBS -l nodes=6
+#PBS -l nodes=1
 
 
 ./heat
