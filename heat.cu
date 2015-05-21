@@ -187,7 +187,7 @@ void CheckPoints(float* firstArray, float* secondArray)
 
 void ProcessOutput(float* array, int testCase, float time)
 {
-	FILE *f = fopen(CUDA_OUTPUT, "a");
+	/*FILE *f = fopen(CUDA_OUTPUT, "a");
 	if (f == NULL)
 	{
 		printf("!!!Error opening the output file!!!\n");
@@ -203,5 +203,15 @@ void ProcessOutput(float* array, int testCase, float time)
 		}
 	}
 	fprintf(f, "\n\n");
-	fclose(f);
+	fclose(f);*/
+	printf("Runtime for test case %d with %d points:\n", testCase, NUMPOINTS);
+	printf("%f\n", time);
+	if (NUMPOINTS <= 15) {
+		printf("Resultant temperatures:\n");
+		for (int index = 0; index < NUMPOINTS; index++)
+		{
+			printf("%0.2f ", array[index]);
+		}
+	}
+	printf("\n\n");
 }

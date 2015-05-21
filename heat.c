@@ -104,7 +104,7 @@ void PrintPoints(float* array, double currentTime)
 
 void ProcessOutput(float* array, int testCase, float time)
 {
-	//int index;
+	/*//int index;
 	FILE *f = fopen(SERIAL_OUTPUT, "a");
 	if (f == NULL)
 	{
@@ -121,5 +121,15 @@ void ProcessOutput(float* array, int testCase, float time)
 		}
 	}
 	fprintf(f, "\n\n");
-	fclose(f);
+	fclose(f);*/
+	printf("Runtime for test case %d with %d points:\n", testCase, NUMPOINTS);
+	fprintf(f, "%f\n", time);
+	if (NUMPOINTS <= 15) {
+		printf("Resultant temperatures:\n");
+		for (int index = 0; index < NUMPOINTS; index++)
+		{
+			printf("%0.2f ", array[index]);
+		}
+	}
+	printf("\n\n");
 }
