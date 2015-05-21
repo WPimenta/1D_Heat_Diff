@@ -50,68 +50,69 @@ int main()
 	}
 
 	MPI_Barrier(MPI_COMM_WORLD);
-
-	if(w_rank == 0)
+	while (testCase <= 6)
 	{
-		NUMPOINTS = (int)inputs[testCase-1][0]; //Added this
-		ENDTIME = inputs[testCase-1][1]; //Added this
-		DT = inputs[testCase-1][2]; //Added this
-		ENDVALUES = inputs[testCase-1][3]; //Added this
-		clock_t start, end;
-		currentPoints_serial = (float*)malloc(NUMPOINTS*sizeof(float));
-		currentPoints_parallel = (float*)malloc(NUMPOINTS*sizeof(float));
-		result	 = (float*)malloc(NUMPOINTS*sizeof(float));
-		appliedHeat = ENDVALUES;
-		InitRod(currentPoints_parallel, NUMPOINTS, ROOM_TEMP, appliedHeat);
-		InitRod(currentPoints_serial, NUMPOINTS, ROOM_TEMP, appliedHeat);
-		dx = currentPoints_serial[1] - currentPoints_serial[0];
-		dt = DT;
-		chunk_size = NUMPOINTS/w_size;
-		printf("\nHeating sample:\t%d.\n",testCase);
-		start = clock();
-		serialDiffusion(currentPoints_serial, result, dx, dt, ENDTIME);
-		end = clock() - start;
-		sTime = end/CLOCKS_PER_SEC;
-	}
-
-	MPI_Barrier(MPI_COMM_WORLD);
-	if(w_rank == 0) mpi_time = MPI_Wtime();
-
-
-	while(currentTime < ENDTIME)
-	{
-		begin_computation(currentPoints_parallel,w_rank, w_size, dx, dt, chunk_size);
-		currentTime += DT;
-	}
-	MPI_Barrier(MPI_COMM_WORLD);
-
-	if (w_rank == 0)
-	{
-		mpi_time = MPI_Wtime() - mpi_time;
-		int verification = 0;
-		printf("Verifying output.\n");
-		verification = verify(currentPoints_serial, currentPoints_parallel, NUMPOINTS);
-		if(verification == 0)
+		if(w_rank == 0)
 		{
-			printf("Done.\n\n");
-			printf("Serial\t:\t%f seconds.\n", sTime);
-			printf("MPI\t:\t%f seconds.\n", mpi_time);
-			printf("Speedup\t:\t%f.\n", sTime/mpi_time);
+			NUMPOINTS = (int)inputs[testCase-1][0]; //Added this
+			ENDTIME = inputs[testCase-1][1]; //Added this
+			DT = inputs[testCase-1][2]; //Added this
+			ENDVALUES = inputs[testCase-1][3]; //Added this
+			clock_t start, end;
+			currentPoints_serial = (float*)malloc(NUMPOINTS*sizeof(float));
+			currentPoints_parallel = (float*)malloc(NUMPOINTS*sizeof(float));
+			result	 = (float*)malloc(NUMPOINTS*sizeof(float));
+			appliedHeat = ENDVALUES;
+			InitRod(currentPoints_parallel, NUMPOINTS, ROOM_TEMP, appliedHeat);
+			InitRod(currentPoints_serial, NUMPOINTS, ROOM_TEMP, appliedHeat);
+			dx = currentPoints_serial[1] - currentPoints_serial[0];
+			dt = DT;
+			chunk_size = NUMPOINTS/w_size;
+			printf("\nHeating sample:\t%d.\n",testCase);
+			start = clock();
+			serialDiffusion(currentPoints_serial, result, dx, dt, ENDTIME);
+			end = clock() - start;
+			sTime = end/CLOCKS_PER_SEC;
 		}
-		else if (verification == 1)
-		{
-			printf("Error: Serial and Parallel computation mismatch.");
-		}
-	}
 
-	if(w_rank == 0)
-	{
-		//PrintPoints(currentPoints_parallel, NUMPOINTS, ENDTIME);
-		testCase++; //Added this
-		MPI_Bcast(&testCase, 1, MPI_INT, 0 , MPI_COMM_WORLD); //Added this
+		MPI_Barrier(MPI_COMM_WORLD);
+		if(w_rank == 0) mpi_time = MPI_Wtime();
+
+
+		while(currentTime < ENDTIME)
+		{
+			begin_computation(currentPoints_parallel,w_rank, w_size, dx, dt, chunk_size);
+			currentTime += DT;
+		}
+		MPI_Barrier(MPI_COMM_WORLD);
+
+		if (w_rank == 0)
+		{
+			mpi_time = MPI_Wtime() - mpi_time;
+			int verification = 0;
+			printf("Verifying output.\n");
+			verification = verify(currentPoints_serial, currentPoints_parallel, NUMPOINTS);
+			if(verification == 0)
+			{
+				printf("Done.\n\n");
+				printf("Serial\t:\t%f seconds.\n", sTime);
+				printf("MPI\t:\t%f seconds.\n", mpi_time);
+				printf("Speedup\t:\t%f.\n", sTime/mpi_time);
+			}
+			else if (verification == 1)
+			{
+				printf("Error: Serial and Parallel computation mismatch.");
+			}
+		}
+
+		if(w_rank == 0)
+		{
+			//PrintPoints(currentPoints_parallel, NUMPOINTS, ENDTIME);
+			testCase++; //Added this
+			MPI_Bcast(&testCase, 1, MPI_INT, 0 , MPI_COMM_WORLD); //Added this
+		}
+		free(currentPoints_serial); free(currentPoints_parallel); free(result);
 	}
-	free(currentPoints_serial); free(currentPoints_parallel); free(result);
-	
 	MPI_Finalize();	
 	return 1;
 }
