@@ -1,0 +1,200 @@
+\documentclass{beamer}
+\usetheme{Singapore}
+\usecolortheme{rose}
+\usefonttheme{serif}
+\usepackage[latin1]{inputenc}
+\usepackage{graphicx}
+\setbeamertemplate{navigation symbols}{}
+
+%Use only when printing
+%usepackage{pgfpages}
+%\pgfpagesuselayout{resize to}[a4paper,border shrink=5mm,landscape]
+%Uncomment the above 2 lines when making a pdf to print, for the presentation use a pdf compiled with them commented out
+
+\author{Wade Pimenta$^1$ (544147)}
+\title{Advanced CPU Benchmarking of ARM Processors for Applications in High Energy Physics}
+\institute{$^1$University of the Witwatersrand, Johannesburg,
+South Africa}
+\date{October 1, 2014}
+
+%----------------------------------------------------------------------------------------------------------
+
+\begin{document}
+\begin{frame}
+	\maketitle
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+
+\begin{frame}
+	\frametitle{Outline}
+	\tableofcontents
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+
+\section{Introduction}
+\subsection{Acknowledgments}
+\begin{frame}{}
+\frametitle{Acknowledgments}
+A special thank you to:
+\bigskip
+\begin{itemize}
+\item Professor Bruce Mellado (Supervisor)
+\item Mr Mitch Cox
+\item Mr Robert Reed
+\end{itemize}
+\bigskip
+For all the help, support and guidance given throughout the project.
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+
+
+
+%----------------------------------------------------------------------------------------------------------
+\section{ATLAS, Big Data and High Throughput}
+\subsection{ATLAS - The Problem of Big Data}
+\begin{frame}
+\frametitle{ATLAS and the Problem of Storage}
+\begin{columns}
+\column{0.5\textwidth}
+
+The ATLAS experiment, one of the detectors within the LHC, plans to raise current energy levels to 13TeV, with
+increased luminosity.
+\bigskip
+
+Originally, 1 petabyte of raw data was produced per second. This will only increase!
+
+\column{0.5\textwidth}
+\begin{figure}
+\includegraphics[width = 3cm]{ATLAS3.jpg}
+\end{figure}
+\smallskip
+\begin{figure}
+\includegraphics[width = 4cm]{AtlasDetectorLabeled.jpg}
+\end{figure}
+\end{columns}
+\end{frame}
+
+
+
+\begin{frame}
+\begin{figure}
+\includegraphics[width = 10cm]{Big-data-infographic.png}
+\end{figure}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+\begin{frame}{}
+\begin{columns}
+\column{0.5\textwidth}
+\frametitle{Coping with Big Data}
+It is impossible to store such a high volume of data, thus a first level trigger system is used to 'sift' for useful information.
+\column{0.5\textwidth}
+
+\begin{figure}
+\includegraphics[width = 4cm]{Trigger_small.png}
+\end{figure}
+
+\end{columns}
+\begin{block}{First - level trigger}
+A layer of supercomputers that rapidly decide what data to keep while the experiment is operational.
+\end{block}
+
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+
+\subsection{ARM Processors - The Quest for High Throughput}
+\begin{frame}{ARM Processors - The Quest for Throughput}
+
+At WITS, research is being conducted on a set of possible systems that would fulfill the following criteria:
+
+\begin{itemize}
+\item Power Efficient
+\item Low Cost
+\item Highly Parallel
+\end{itemize}
+
+One of the systems currently being tested is a cluster of ARM processors that act as a high throughput supercomputer.
+\medskip
+
+\begin{block}{Throughput}
+In a computing sense, it is the ability to process vast amounts of data quickly using simple, repetitive, algorithms
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\begin{columns}
+\column{0.5\textwidth}
+The assembled cluster has proven to be extremely efficient and surprisingly fast.
+\bigskip
+
+However, all aspects must be tested to understand its performance.
+\bigskip
+\begin{block}{Processors}
+\begin{itemize}
+\item Wandboard
+\item Odroid
+\item Cubieboard
+\end{itemize}
+\end{block}
+\column{0.5\textwidth}
+\begin{figure}
+\includegraphics[width = 4cm]{newcluster.jpg}
+\end{figure}
+\end{columns}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+
+\section{The SU3 AHiggs Benchmark}
+\subsection{Benchmarking}
+\begin{frame}
+\frametitle{Benchmarking}
+In order to understand each ARM's processing power, the SU3 AHiggs Benchmark was chosen - scripted by Prof. Kari Rummukainen.
+\bigskip
+
+SU3 AHiggs is a Lattice Quantum Chromodynamic calculation and puts strain on:
+
+\begin{itemize}
+\item Computational Power
+\item Memory
+\end{itemize}
+
+
+
+\bigskip
+
+\begin{block}{Benchmark}
+Software that pushes aspects of a computer to their limits for testing.
+\end{block}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+
+\subsection{A Brief Introduction to LQCD}
+\begin{frame}
+\frametitle{A Brief Introduction to LQCD}
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+
+\subsection{Expectations}
+\begin{frame}{}
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------
+
+
+\end{frame}
+
+
+
+
+\end{document}
