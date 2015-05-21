@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9) (preloaded format=pdflatex 2014.12.27)  21 MAY 2015 20:52
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9) (preloaded format=pdflatex 2014.12.27)  21 MAY 2015 21:51
 entering extended mode
 **CudaSlides.tex
 
@@ -759,31 +759,54 @@ Package: inputenc 2008/03/30 v1.1d Input encoding file
 ("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\latin1.def"
 File: latin1.def 2008/03/30 v1.1d Input encoding file
 ))
+("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\algorithmicx\algpseudocode.sty"
+Package: algpseudocode 
+
+("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\ifthen.sty"
+Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
+)
+("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\algorithmicx\algorithmicx.sty"
+Package: algorithmicx 2005/04/27 v1.2 Algorithmicx
+
+Document Style algorithmicx 1.2 - a greatly improved `algorithmic' style
+\c@ALG@line=\count153
+\c@ALG@rem=\count154
+\c@ALG@nested=\count155
+\ALG@tlm=\skip57
+\ALG@thistlm=\skip58
+\c@ALG@Lnr=\count156
+\c@ALG@blocknr=\count157
+\c@ALG@storecount=\count158
+\c@ALG@tmpcounter=\count159
+\ALG@tmplength=\skip59
+)
+Document Style - pseudocode environments for use with the `algorithmicx' style
+)
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\\' on input line 14.
+(hyperref)                removing `\\' on input line 15.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\\' on input line 14.
+(hyperref)                removing `\\' on input line 15.
 
 
 ("D:\Users\TipTeQ\Dropbox\Varsity Stuff 2015\HPC\HPC Assignment 2 Group\Slides\
 CudaSlides.aux")
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 20.
-LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 21.
+LaTeX Font Info:    ... okay on input line 21.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -821,20 +844,20 @@ LaTeX Font Info:    ... okay on input line 20.
 
 ("D:\Program Files (x86)\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count153
+\scratchcounter=\count160
 \scratchdimen=\dimen188
 \scratchbox=\box53
-\nofMPsegments=\count154
-\nofMParguments=\count155
+\nofMPsegments=\count161
+\nofMParguments=\count162
 \everyMPshowfont=\toks45
-\MPscratchCnt=\count156
+\MPscratchCnt=\count163
 \MPscratchDim=\dimen189
-\MPnumerator=\count157
-\makeMPintoPDFobject=\count158
+\MPnumerator=\count164
+\makeMPintoPDFobject=\count165
 \everyMPtoPDFconversion=\toks46
 ) ABD: EveryShipout initializing macros
 \AtBeginShipoutBox=\box54
-Package hyperref Info: Link coloring OFF on input line 20.
+Package hyperref Info: Link coloring OFF on input line 21.
 
 ("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\hyperref\nameref.sty"
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
@@ -842,11 +865,11 @@ Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
 ("D:\Program Files (x86)\MiKTeX 2.9\tex\generic\oberdiek\gettitlestring.sty"
 Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
-\c@section@level=\count159
+\c@section@level=\count166
 )
-LaTeX Info: Redefining \ref on input line 20.
-LaTeX Info: Redefining \pageref on input line 20.
-LaTeX Info: Redefining \nameref on input line 20.
+LaTeX Info: Redefining \ref on input line 21.
+LaTeX Info: Redefining \pageref on input line 21.
+LaTeX Info: Redefining \nameref on input line 21.
 
 ("D:\Users\TipTeQ\Dropbox\Varsity Stuff 2015\HPC\HPC Assignment 2 Group\Slides\
 CudaSlides.out")
@@ -878,13 +901,13 @@ Dictionary: translator-numbers-dictionary, Language: English
 slator-theorem-dictionary\translator-theorem-dictionary-English.dict"
 Dictionary: translator-theorem-dictionary, Language: English 
 )
-LaTeX Info: Redefining \includegraphics on input line 20.
+LaTeX Info: Redefining \includegraphics on input line 21.
 
 ("D:\Users\TipTeQ\Dropbox\Varsity Stuff 2015\HPC\HPC Assignment 2 Group\Slides\
 CudaSlides.nav")
 
 LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <4> not available
-(Font)              size <5> substituted on input line 23.
+(Font)              size <5> substituted on input line 24.
 
 [1{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}
 
@@ -893,12 +916,12 @@ LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <4> not available
 CudaSlides.toc") [2
 
 ]
-LaTeX Font Info:    Try loading font information for U+msa on input line 36.
+LaTeX Font Info:    Try loading font information for U+msa on input line 37.
 
 ("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsa.fd"
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 36.
+LaTeX Font Info:    Try loading font information for U+msb on input line 37.
 
 ("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\amsfonts\umsb.fd"
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -907,37 +930,37 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ] [4
 
 ]
-<Visual1.jpg, id=77, 974.13937pt x 191.21437pt>
+<Visual1.jpg, id=88, 974.13937pt x 191.21437pt>
 File: Visual1.jpg Graphic file (type jpg)
  <use Visual1.jpg>
-Package pdftex.def Info: Visual1.jpg used on input line 50.
+Package pdftex.def Info: Visual1.jpg used on input line 51.
 (pdftex.def)             Requested size: 312.9803pt x 61.43492pt.
 
-Overfull \hbox (5.69043pt too wide) in paragraph at lines 50--50
+Overfull \hbox (5.69043pt too wide) in paragraph at lines 51--51
  [] 
  []
 
 [5
 
  <D:/Users/TipTeQ/Dropbox/Varsity Stuff 2015/HPC/HPC Assignment 2 Group/Slides/
-Visual1.jpg>] <Visual2.jpg, id=86, 948.54375pt x 198.7425pt>
+Visual1.jpg>] <Visual2.jpg, id=98, 948.54375pt x 198.7425pt>
 File: Visual2.jpg Graphic file (type jpg)
 
 <use Visual2.jpg>
-Package pdftex.def Info: Visual2.jpg used on input line 61.
+Package pdftex.def Info: Visual2.jpg used on input line 62.
 (pdftex.def)             Requested size: 312.9803pt x 65.57613pt.
 
-Overfull \hbox (5.69043pt too wide) in paragraph at lines 61--61
+Overfull \hbox (5.69043pt too wide) in paragraph at lines 62--62
  [] 
  []
 
-<Visual3.jpg, id=87, 942.52126pt x 194.22563pt>
+<Visual3.jpg, id=99, 942.52126pt x 194.22563pt>
 File: Visual3.jpg Graphic file (type jpg)
  <use Visual3.jpg>
-Package pdftex.def Info: Visual3.jpg used on input line 61.
+Package pdftex.def Info: Visual3.jpg used on input line 62.
 (pdftex.def)             Requested size: 312.9803pt x 64.49474pt.
 
-Overfull \hbox (5.69043pt too wide) in paragraph at lines 61--61
+Overfull \hbox (5.69043pt too wide) in paragraph at lines 62--62
  [] 
  []
 
@@ -946,42 +969,67 @@ Overfull \hbox (5.69043pt too wide) in paragraph at lines 61--61
  <D:/Users/TipTeQ/Dropbox/Varsity Stuff 2015/HPC/HPC Assignment 2 Group/Slides/
 Visual2.jpg> <D:/Users/TipTeQ/Dropbox/Varsity Stuff 2015/HPC/HPC Assignment 2 G
 roup/Slides/Visual3.jpg>]
+LaTeX Font Info:    Try loading font information for OML+cmr on input line 78.
+
+("D:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\omlcmr.fd"
+File: omlcmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <10.95> not available
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 78.
+ [7
+
+]
+<cudacode.jpg, id=121, 799.48688pt x 222.8325pt>
+File: cudacode.jpg Graphic file (type jpg)
+ <use cudacode.jpg>
+Package pdftex.def Info: cudacode.jpg used on input line 85.
+(pdftex.def)             Requested size: 312.9803pt x 87.23413pt.
+
+Overfull \hbox (5.69043pt too wide) in paragraph at lines 85--85
+ [] 
+ []
+
+[8
+
+ <D:/Users/TipTeQ/Dropbox/Varsity Stuff 2015/HPC/HPC Assignment 2 Group/Slides/
+cudacode.jpg>]
 \tf@nav=\write6
 \tf@toc=\write7
 \tf@snm=\write8
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 63.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 63.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 87.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 87.
 
 ("D:\Users\TipTeQ\Dropbox\Varsity Stuff 2015\HPC\HPC Assignment 2 Group\Slides\
 CudaSlides.aux")
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 63.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 63.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 87.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 87.
 Package rerunfilecheck Info: File `CudaSlides.out' has not changed.
-(rerunfilecheck)             Checksum: 66126344F8B5CA8A9FEE420A7AC8B132;176.
+(rerunfilecheck)             Checksum: 7E3CCBA9A23D2563EF324A5565DB53B5;235.
 
 
 LaTeX Font Warning: Size substitutions with differences
 (Font)              up to 1.0pt have occurred.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 63.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 87.
  ) 
 Here is how much of TeX's memory you used:
- 16523 strings out of 493921
- 319745 string characters out of 3144872
- 382403 words of memory out of 3000000
- 19408 multiletter control sequences out of 15000+200000
- 8891 words of font info for 34 fonts, out of 3000000 for 9000
+ 17080 strings out of 493921
+ 327830 string characters out of 3144872
+ 392595 words of memory out of 3000000
+ 19945 multiletter control sequences out of 15000+200000
+ 9199 words of font info for 35 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
  56i,19n,56p,519b,751s stack positions out of 5000i,500n,10000p,200000b,50000s
-<D:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb>
-<D:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><D:
-/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><D:/Pr
-ogram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr6.pfb><D:/Progra
-m Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><D:/Program Fi
-les (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on CudaSlides.pdf (6 pages, 223423 bytes).
+<D:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb>
+<D:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><D
+:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><D:/P
+rogram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><D:/Prog
+ram Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr6.pfb><D:/Program 
+Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr8.pfb><D:/Program File
+s (x86)/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on CudaSlides.pdf (8 pages, 298296 bytes).
 PDF statistics:
- 122 PDF objects out of 1000 (max. 8388607)
- 16 named destinations out of 1000 (max. 500000)
- 88 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 162 PDF objects out of 1000 (max. 8388607)
+ 21 named destinations out of 1000 (max. 500000)
+ 101 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -35,10 +35,14 @@ int main()
 {
 	int w_rank;
 	int w_size;
-
+	
 	MPI_Init(NULL, NULL);
 	MPI_Comm_rank(MPI_COMM_WORLD, &w_rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &w_size);
+	
+	float* currentPoints_serial = 0;	
+	float* currentPoints_parallel = 0;	
+	float* result = 0;
 
 	double sTime;
 	double currentTime = 0;
@@ -91,12 +95,9 @@ int main()
 
 		if(w_rank == 0)
 		{
-			float* currentPoints_serial = NULL;
 			currentPoints_parallel = (float*)malloc(NUMPOINTS*sizeof(float));
-			float* currentPoints_parallel = NULL;
 			currentPoints_serial = (float*)malloc(NUMPOINTS*sizeof(float));
-			float* result = NULL;
-			result = (float*)malloc(NUMPOINTS*sizeof(float));	
+			result = (float*)malloc(NUMPOINTS*sizeof(float));
 			sTime = 0;
 			clock_t start, end;
 			appliedHeat = ENDVALUES;

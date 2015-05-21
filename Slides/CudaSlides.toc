@@ -2,3 +2,4 @@
 \beamer@sectionintoc {1}{Introduction}{3}{0}{1}
 \beamer@subsectionintoc {1}{1}{Problem Description}{3}{0}{1}
 \beamer@sectionintoc {2}{A Visual Representation}{5}{0}{2}
+\beamer@sectionintoc {3}{The CUDA Implementation}{7}{0}{3}

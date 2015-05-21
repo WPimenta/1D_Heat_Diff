@@ -4,6 +4,7 @@
 \usefonttheme{serif}
 \usepackage[latin1]{inputenc}
 \usepackage{graphicx}
+\usepackage{algpseudocode}
 \setbeamertemplate{navigation symbols}{}
 
 %Use only when printing
@@ -63,7 +64,24 @@ South Africa}
 \section{The CUDA Implementation}
 \begin{frame}
 	\frametitle{The CUDA Implementation}
-	Visually, we can see 
+	Visually, we can see that the calculation of each new element can be done at the same time as the other elements since there are no data dependencies.\\
+	We can apply the following algorithm:\\
+	\begin{algorithmic}
+		\If {$\text{(tIdx \textgreater 0 and tIdx \textless arraySize-1)}$}
+		\While {$\text{currentTime \textless endTime}$}
+		\State $nextArray[tIdx] \gets currentArray[tIdx] + 0.25(currentArray[tIdx-1]$\\$-2*currentArray[tIdx] + currentArray[tIdx])$
+		\State $\text{Sync threads and copy contents of nextArray to currentArray}$
+		\State $\text{Increment currentTime by timestep}$		
+		\EndWhile
+		\EndIf
+	\end{algorithmic}
+\end{frame}
+
+\begin{frame}
+	\frametitle{The Code}
+	\begin{figure}
+		\includegraphics[width=11cm]{cudacode.jpg}
+	\end{figure}
 \end{frame}
 
 \end{document}
