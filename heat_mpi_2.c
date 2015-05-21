@@ -43,7 +43,6 @@ int main()
 	double dx;
 	double dt;
 	int chunk_size;
-	int EoF = 0;
 	int testCase = 1;
 	char str[70];
 	FILE *p;	
@@ -60,19 +59,16 @@ int main()
 	}
 	while(fgets(str,70,p)!=NULL)
 	{
-		if(w_rank == 0)
-		{
-			char *pch;
-			pch = strtok(str, " ");
-			NUMPOINTS = atof(pch);
-			pch = strtok(NULL, " ");
-			ENDTIME = atof(pch);
-			pch = strtok(NULL, " ");
-			DT = atof(pch);
-			pch = strtok(NULL, " ");
-			ENDVALUES = atof(pch);
-			printf("%d, %f, %f, %f <-----", NUMPOINTS, ENDTIME, DT, ENDVALUES);
-		}
+		char *pch;
+		pch = strtok(str, " ");
+		NUMPOINTS = atof(pch);
+		pch = strtok(NULL, " ");
+		ENDTIME = atof(pch);
+		pch = strtok(NULL, " ");
+		DT = atof(pch);
+		pch = strtok(NULL, " ");
+		ENDVALUES = atof(pch);
+		printf("%d, %f, %f, %f <-----", NUMPOINTS, ENDTIME, DT, ENDVALUES);
 		
 		float* currentPoints_serial = 0;	
 		currentPoints_parallel = (float*)malloc(NUMPOINTS*sizeof(float));
@@ -87,7 +83,7 @@ int main()
 		InitRod(currentPoints_serial, NUMPOINTS, ROOM_TEMP, appliedHeat);
 		dx = currentPoints_serial[1] - currentPoints_serial[0];
 		dt = DT;
-		chunk_size = NUMPOINTS/w_size;
+		
 		printf("Heating sample:\t%d.\n", testCase);
 		start = clock();
 		serialDiffusion(currentPoints_serial, result, dx, dt, ENDTIME);
@@ -97,12 +93,12 @@ int main()
 		MPI_Init(NULL, NULL);
 		MPI_Comm_rank(MPI_COMM_WORLD, &w_rank);
 		MPI_Comm_size(MPI_COMM_WORLD, &w_size);
+		chunk_size = NUMPOINTS/w_size;
 		
 		MPI_Bcast(&NUMPOINTS, 1, MPI_INT, 0, MPI_COMM_WORLD);
 		MPI_Bcast(&ENDTIME, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 		MPI_Bcast(&DT, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 		MPI_Bcast(&ENDVALUES, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-		MPI_Bcast(&EoF, 1, MPI_INT, 0, MPI_COMM_WORLD);
 		
 		MPI_Bcast(&currentPoints_parallel, NUMPOINTS, MPI_FLOAT,0, MPI_COMM_WORLD);
 
