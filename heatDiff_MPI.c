@@ -4,19 +4,21 @@
 #include <time.h>
 #include <mpi.h>
 #include <stdio.h>
-#define NUMPOINTS 1000
-#define ENDTIME 30
-#define DT 0.1
 #define ROOM_TEMP 0
-
+int NUMPOINTS = 1000000;
+double ENDTIME = 1;
+double DT = 0.1;
+double ENDVALUES = 500;
 //Function declarations.
 //
 float* begin_computation(float* currentPoints, int w_rank, int w_size, double dx, double dt, int chunk_size);
 void InitRod(float* array, int size, float roomTemp, double appliedHeat);
 void DiffuseHeat(float* new_Buffer,float* currentPoints, int size, double dx, double dt, float first, float last, int rank, int w_size);
 void PrintPoints(float* array, int size, double currentTime);
+int verify(float* currentPoints_serial, float* currentPoints_parallel, int size);
+void serialDiffusion(float* currentPoints, float* result, double dx, double dt, double endTime);
 
-int main(/*int argc, char *argv[]*/)
+int main()
 {
 
 	int w_rank;
@@ -30,9 +32,11 @@ int main(/*int argc, char *argv[]*/)
 	double dx;
 	double dt;
 	int chunk_size;
-	float* currentPoints = NULL;
-
-	MPI_Barrier(MPI_COMM_WORLD);
+	int testCase = 1;
+	double sTime;
+	float* currentPoints_serial = NULL;
+	float* currentPoints_parallel = NULL;
+	float* result = NULL;
 
 	if(w_rank == 0)
 	{
@@ -41,25 +45,36 @@ int main(/*int argc, char *argv[]*/)
 		printf("\tAuthors: Wade Pimenta & David Kroukamp\n");
 		printf("\n--------------------------------------------------------\n");
 		printf("\nInitialised with %d processors.\n", w_size);
-		printf("\nBeginning computation ...\n");
-		mpi_time = MPI_Wtime();
-		currentPoints = (float*)malloc(NUMPOINTS*sizeof(float));
-		srand(time(NULL));
-		appliedHeat = rand()&100+1;
-		InitRod(currentPoints, NUMPOINTS, ROOM_TEMP, appliedHeat);
-		dx = currentPoints[1] - currentPoints[0];
+	}
+
+	MPI_Barrier(MPI_COMM_WORLD);
+
+	if(w_rank == 0)
+	{
+		clock_t start, end;
+		currentPoints_serial = (float*)malloc(NUMPOINTS*sizeof(float));
+		currentPoints_parallel = (float*)malloc(NUMPOINTS*sizeof(float));
+		result	 = (float*)malloc(NUMPOINTS*sizeof(float));
+		appliedHeat = ENDVALUES;
+		InitRod(currentPoints_parallel, NUMPOINTS, ROOM_TEMP, appliedHeat);
+		InitRod(currentPoints_serial, NUMPOINTS, ROOM_TEMP, appliedHeat);
+		dx = currentPoints_serial[1] - currentPoints_serial[0];
 		dt = DT;
 		chunk_size = NUMPOINTS/w_size;
-
+		printf("\nHeating sample:\t%d.\n",testCase);
+		start = clock();
+		serialDiffusion(currentPoints_serial, result, dx, dt, ENDTIME);
+		end = clock() - start;
+		sTime = end/CLOCKS_PER_SEC;
 	}
+
+	MPI_Barrier(MPI_COMM_WORLD);
+	if(w_rank == 0) mpi_time = MPI_Wtime();
+
 
 	while(currentTime < ENDTIME)
 	{
-		if(w_rank == 0)
-		{
-//			PrintPoints(currentPoints, NUMPOINTS, currentTime);
-		}
-		begin_computation(currentPoints,w_rank, w_size, dx, dt, chunk_size);
+		begin_computation(currentPoints_parallel,w_rank, w_size, dx, dt, chunk_size);
 		currentTime += DT;
 	}
 	MPI_Barrier(MPI_COMM_WORLD);
@@ -67,16 +82,59 @@ int main(/*int argc, char *argv[]*/)
 	if (w_rank == 0)
 	{
 		mpi_time = MPI_Wtime() - mpi_time;
+		int verification = 0;
+		printf("Verifying output.\n");
+		verification = verify(currentPoints_serial, currentPoints_parallel, NUMPOINTS);
+		if(verification == 0)
+		{
+			printf("Done.\n\n");
+			printf("Serial\t:\t%f seconds.\n", sTime);
+			printf("MPI\t:\t%f seconds.\n", mpi_time);
+			printf("Speedup\t:\t%f.\n", sTime/mpi_time);
+		}
+		else if (verification == 1)
+		{
+			printf("Error: Serial and Parallel computation mismatch.");
+		}
 	}
 
-	MPI_Finalize();
 	if(w_rank == 0)
 	{
-		PrintPoints(currentPoints, NUMPOINTS, ENDTIME);
-		printf("\nCompleted in %f seconds wall clock time.\n\nData stored to 'HeatDiffusion.txt'.\n", mpi_time);
+		//PrintPoints(currentPoints_parallel, NUMPOINTS, ENDTIME);
 	}
-	free(currentPoints);
+	free(currentPoints_serial); free(currentPoints_parallel); free(result);
+	
+	MPI_Finalize();	
 	return 1;
+}
+
+int verify(float* currentPoints_serial, float* currentPoints_parallel, int size)
+{
+	int check = 0;
+	int index;
+	for(index = 0; index < size; index ++)
+	{
+		if(currentPoints_serial[index] != currentPoints_parallel[index]) check = 1;
+	}
+	return check;
+}
+
+void serialDiffusion(float *currentPoints, float* result, double dx, double dt, double endTime)
+{
+	double currentTime = 0;
+	int index;
+	while(currentTime < endTime)
+	{
+		for(index = 1; index < NUMPOINTS -1; index ++)
+		{
+			result[index] = currentPoints[index] + 0.25*(currentPoints[index+1]-2*(currentPoints[index])+currentPoints[index-1]);
+		}
+		for(index = 1; index < NUMPOINTS -1; index++)
+		{
+			currentPoints[index] = result[index];
+		}
+		currentTime += dt;
+	}	
 }
 
 float* begin_computation(float* currentPoints, int w_rank, int w_size, double dx, double dt, int chunk_size)
