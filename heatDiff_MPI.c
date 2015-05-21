@@ -18,6 +18,8 @@ void PrintPoints(float* array, int size, double currentTime);
 int verify(float* currentPoints_serial, float* currentPoints_parallel, int size);
 void serialDiffusion(float* currentPoints, float* result, double dx, double dt, double endTime);
 
+double inputs[6][4] = {{12, 5, 0.1, 500}, {120, 5, 0.1, 500}, {1200, 5, 0.1, 500}, {12000, 5, 0.1, 500}, {120000, 5, 0.1, 500}, {1200000, 5, 0.1, 500}}; //Added this
+
 int main()
 {
 
@@ -51,6 +53,10 @@ int main()
 
 	if(w_rank == 0)
 	{
+		NUMPOINTS = (int)inputs[testCase-1][0]; //Added this
+		ENDTIME = inputs[testCase-1][1]; //Added this
+		DT = inputs[testCase-1][2]; //Added this
+		ENDVALUES = inputs[testCase-1][3]; //Added this
 		clock_t start, end;
 		currentPoints_serial = (float*)malloc(NUMPOINTS*sizeof(float));
 		currentPoints_parallel = (float*)malloc(NUMPOINTS*sizeof(float));
@@ -101,6 +107,8 @@ int main()
 	if(w_rank == 0)
 	{
 		//PrintPoints(currentPoints_parallel, NUMPOINTS, ENDTIME);
+		testCase++; //Added this
+		MPI_Bcast(&testCase, 1, MPI_INT, 0 , MPI_COMM_WORLD); //Added this
 	}
 	free(currentPoints_serial); free(currentPoints_parallel); free(result);
 	
