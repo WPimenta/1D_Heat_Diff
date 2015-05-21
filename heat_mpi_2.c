@@ -35,14 +35,6 @@ int main()
 {
 	int w_rank;
 	int w_size;
-	
-	MPI_Init(NULL, NULL);
-	MPI_Comm_rank(MPI_COMM_WORLD, &w_rank);
-	MPI_Comm_size(MPI_COMM_WORLD, &w_size);
-	
-	float* currentPoints_serial = 0;	
-	float* currentPoints_parallel = 0;	
-	float* result = 0;
 
 	double sTime;
 	double currentTime = 0;
@@ -56,21 +48,17 @@ int main()
 	char str[70];
 	FILE *p;	
 
-	if(w_rank == 0)
+	printf("\n--------------------------------------------------------\n");
+	printf("\n\t--> 1D - Heat Diffusion with MPI <--\n\n");
+	printf("\tAuthors: Wade Pimenta & David Kroukamp\n");
+	printf("\n--------------------------------------------------------\n\n\n");
+	remove(MPI_OUTPUT);
+	if((p=fopen(MPI_INPUT,"r"))==NULL)
 	{
-		printf("\n--------------------------------------------------------\n");
-		printf("\n\t--> 1D - Heat Diffusion with MPI <--\n\n");
-		printf("\tAuthors: Wade Pimenta & David Kroukamp\n");
-		printf("\n--------------------------------------------------------\n\n\n");
-		remove(MPI_OUTPUT);
-		if((p=fopen(MPI_INPUT,"r"))==NULL)
-		{
-			printf("Error: Unable to open mpi_input.txt");
-			exit(1);
-		}
-		fgets(str,70,p);
+		printf("Error: Unable to open mpi_input.txt");
+		exit(1);
 	}
-	while(EoF != 1)
+	while(fgets(str,70,p)!=NULL)
 	{
 		if(w_rank == 0)
 		{
@@ -85,80 +73,51 @@ int main()
 			ENDVALUES = atof(pch);
 			printf("%d, %f, %f, %f <-----", NUMPOINTS, ENDTIME, DT, ENDVALUES);
 		}
+		
+		float* currentPoints_serial = 0;	
+		currentPoints_parallel = (float*)malloc(NUMPOINTS*sizeof(float));
+		float* currentPoints_parallel = 0;	
+		currentPoints_serial = (float*)malloc(NUMPOINTS*sizeof(float));
+		float* result = 0;
+		result = (float*)malloc(NUMPOINTS*sizeof(float));
+		sTime = 0;
+		clock_t start, end;
+		appliedHeat = ENDVALUES;
+		InitRod(currentPoints_parallel, NUMPOINTS, ROOM_TEMP, appliedHeat);
+		InitRod(currentPoints_serial, NUMPOINTS, ROOM_TEMP, appliedHeat);
+		dx = currentPoints_serial[1] - currentPoints_serial[0];
+		dt = DT;
+		chunk_size = NUMPOINTS/w_size;
+		printf("Heating sample:\t%d.\n", testCase);
+		start = clock();
+		serialDiffusion(currentPoints_serial, result, dx, dt, ENDTIME);
+		end = clock() - start;
+		sTime = end/CLOCKS_PER_SEC;
 
+		MPI_Init(NULL, NULL);
+		MPI_Comm_rank(MPI_COMM_WORLD, &w_rank);
+		MPI_Comm_size(MPI_COMM_WORLD, &w_size);
+		
 		MPI_Bcast(&NUMPOINTS, 1, MPI_INT, 0, MPI_COMM_WORLD);
 		MPI_Bcast(&ENDTIME, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 		MPI_Bcast(&DT, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 		MPI_Bcast(&ENDVALUES, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 		MPI_Bcast(&EoF, 1, MPI_INT, 0, MPI_COMM_WORLD);
-
-
-		if(w_rank == 0)
-		{
-			currentPoints_parallel = (float*)malloc(NUMPOINTS*sizeof(float));
-			currentPoints_serial = (float*)malloc(NUMPOINTS*sizeof(float));
-			result = (float*)malloc(NUMPOINTS*sizeof(float));
-			sTime = 0;
-			clock_t start, end;
-			appliedHeat = ENDVALUES;
-			InitRod(currentPoints_parallel, NUMPOINTS, ROOM_TEMP, appliedHeat);
-			InitRod(currentPoints_serial, NUMPOINTS, ROOM_TEMP, appliedHeat);
-			dx = currentPoints_serial[1] - currentPoints_serial[0];
-			dt = DT;
-			chunk_size = NUMPOINTS/w_size;
-			printf("Heating sample:\t%d.\n", testCase);
-			start = clock();
-			serialDiffusion(currentPoints_serial, result, dx, dt, ENDTIME);
-			end = clock() - start;
-			sTime = end/CLOCKS_PER_SEC;
-		}
-//		if(w_rank ==1) printf("im here!");
-//		if(w_rank == 0) PrintPoints(currentPoints_parallel, NUMPOINTS, 987654);
-		MPI_Barrier(MPI_COMM_WORLD);
+		
 		MPI_Bcast(&currentPoints_parallel, NUMPOINTS, MPI_FLOAT,0, MPI_COMM_WORLD);
 
-		if(w_rank == 0)
-		{
-			mpi_time = MPI_Wtime();
-		}
 		/*while(currentTime < ENDTIME)
 		{
 			currentTime += DT;
 			begin_computation(result, currentPoints_parallel, w_rank, w_size, dx, dt, chunk_size);
 			//xPrintPoints(currentPoints_parallel, NUMPOINTS, currentTime);
 		}*/
-		MPI_Barrier(MPI_COMM_WORLD);
-
-		if (w_rank == 0)
-		{
-			mpi_time = MPI_Wtime() - mpi_time;
-			int verification = 0;
-			printf("Verifying output.\n");
-			//verification = verify(currentPoints_serial, currentPoints_parallel, NUMPOINTS);
-			if(verification == 0)
-			{
-				printf("Done.\n\n");
-				printf("Serial\t:\t%f seconds.\n", sTime);
-				printf("MPI\t:\t%f seconds.\n\n", mpi_time);
-//				ProcessOutput(currentPoints_parallel, testCase, mpi_time);
-			}
-			else if(verification == 1)
-			{
-				printf("Error: Serial and Parallel computation mismatch.\n");
-			}
-			testCase++;
-			printf("got here");
-			if(fgets(str,70,p)==NULL) EoF=1;
-			printf("%d<----------------------", EoF);
-		}
-		free(currentPoints_serial); free(result); free(currentPoints_parallel);
-		MPI_Bcast(&EoF, 1, MPI_INT, 0, MPI_COMM_WORLD);
+		free(currentPoints_serial);
+		free(result);
+		free(currentPoints_parallel);
+		MPI_Finalize();
 	}
-	if(w_rank == 0)
-	{
-		printf("\n -------->\tData Stored to mpi_output.txt\t<--------\n");
-	}
-	MPI_Finalize();
+	printf("\n -------->\tData Stored to mpi_output.txt\t<--------\n");
 	fclose(p);
 	return 1;
 }
