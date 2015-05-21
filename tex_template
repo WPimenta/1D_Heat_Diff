@@ -1,0 +1,256 @@
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{changepage}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{epsfig}
+\titlespacing*{\section}{0pt}{5.5ex plus 1ex minus .2ex}{4.3ex plus .2ex}
+\titlespacing*{\subsection}{0pt}{5.5ex plus 1ex minus .2ex}{4.3ex plus .2ex}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1.3ex}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=C,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true
+  tabsize=3
+}
+
+\title{High Performance Computing and Scientific Data Management 
+Assignment \#2
+}
+\author{Wade A. Pimenta (544147)}
+\date{}
+\begin{document}
+\raggedbottom
+\maketitle
+
+\begin{figure}
+\centering
+\includegraphics[width=5cm]{wits-logo.jpg}
+\end{figure}
+
+\newpage
+
+\newpage
+\section{Solutions to Problems}
+\subsection{Question 1}
+
+\paragraph{}
+When considering the diameter of the p-node hypercube, consider the definition of a hypercube, that is, a higher dimensional hypercube is made from connecting every like vertex shared with the hypercube of the previous dimension. In this case, we notice that every node has the same amount of edges connecting to it. This can be described by $p=2^d$ where d stands for the dimension of the hypercube. However, by this same reasoning, it is clear that the maximum distance between any two nodes must be equal to the maximum number of edges connected to any node which is also represented by the number d. Thus the diameter, can be given by $d = log(p)$.
+
+\paragraph{}
+Now, if $G_n$ represents the nth dimensional hypercube, then it is formed by connecting every like vertex it shares with $G_{n-1}$. Thus the number of added edges is equal to the number of added nodes which can be described by $\frac{p}{2}$. Since $G_n$ is formed by linking each like vertex, the bisection width is simply deduced by removing those selfsame wires, which is $\frac{p}{2}$
+
+\paragraph{}
+Finally, although there are many benefits to a hypercube architecture, its main downfall is the sheer amount of wires needed to connect each node. The cost of the hypercube can be approximated by the number of wires in a hypercube. If there are p-nodes in a hypercube, then there must be $log(p)$ edges connected to every node. Thus, there must be $plogp$ edges, however, this will lead to over-counting as each node shares its edges with other nodes. Thus, dividing by 2 will remove this over-count, yielding: $C= \frac{plogp}{2}$
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=10cm]{hypercube.png}
+\label{hyper}
+\caption{A 3D and 4D Hypercube.}
+\end{figure}
+
+\clearpage
+\subsection{Question 2}
+\paragraph{}
+For the diameter of a 3D mesh with wraparound, an analytical method can be used. First, we are constrained to 3 dimensions, this means that the number of nodes must always be in powers of the most basic 3D shape, the cube. Hence, there must be $8^n$ nodes for the mesh to correctly form. Now, consider, the diameter is the maximum distance from one node to the farthest node connected to the network. We know that from every node, we can find the amount of edges in the graph by correlating them to the diameter. Now, if we take the diameter to be some number $d$, this has to be to the power of 3 to match the dimension. However, this will lead to over counting, so we expect some correction factor to be needed to count properly, call this $c$. This gives a hypothesis formula of $(cd)^3 = p$. Now, if we consider Figure 2, we know that there are 8 nodes and that the diameter of this mesh is 3. If these values are plugged into the previous formula, we find that $c = \frac{2}{3}$. Re-substituting this back into the original hypothesis we have $d = \frac{3}{2}*(p)^{\frac{1}{3}}$ where $ p = 8^n$.
+\paragraph{}
+For the bisection width, we know from the 2D wraparound that $BW = 2\sqrt{p}$. Logically, we are only increasing the dimension, however the ratio of wires to be cut remain the same. Thus it can be said that, for a 3D mesh with wraparound $BW = 2(p)^\frac{2}{3}$ where p is defined above.
+
+\begin{figure}[!ht]
+\centering
+\includegraphics[width=5cm]{mesh.png}
+\label{hyper}
+\caption{A 3D Mesh with Wraparound.}
+\end{figure}
+
+\clearpage
+\section{Programming Exercise}
+\subsection{The Task:}
+\paragraph{}
+For this assignment, an openMP statistics program was created in order to implement and observe the effect of OpenMP directives when attempting to parallelize serial code. The code was tested on one dimensional arrays of sizes 10'000, 100'000 and 1'000'000 elements, populated with semi-randomly generated numbers using the basic C rand() function with time seed. Furthermore, the number of threads used were varied for each data set and computation times compared.
+
+\subsection{Test System Specs:}
+\begin{itemize}
+\item Lenovo Ideapad Laptop
+\item Intel Core i7-3632QM CPU @ 2.2GHz
+\item Clock Speed: 100MHz
+\item Cores: 4
+\item Maximum Threads: 16
+\end{itemize}
+
+\subsection{Compiling the Code:}
+\begin{itemize}
+\item Unzip the attached file: \textbf{544147\_HPC\_Assignment\_1.tar} folder into a desired directory.
+\item Open the terminal in the same directory as the extracted file named: \textbf{544147\_HPC\_Assignment.c}
+\item Compile the .c file into an executable by using the command below:
+\end{itemize}
+\paragraph{}
+\textbf{gcc -fopenmp 544147\_HPC\_Assignment.c -o 544147\_HPC\_Assignment}
+
+\par{}
+To run the code, use the command \textbf{./544147\_HPC\_Assignment}. From here enter the length of the array to be tested, and press "enter". Then input the number of threads to be used for parallelization of the code and press enter. Note that the thread number is proportional the the number of cores on the system and is an integer value of some power of two.
+
+\subsection{Discussion of Implementation:}
+
+%------------------------------------------------------------------------------------------------------------------------
+
+\par
+Below, various snippets of the source code are included in order to discuss each directive implemented. The name of the function is given followed by the actual snippet of source code below it.
+\bigskip
+\par{}
+\textbf{Function: begin\_Analysis(double list[], int size,int num\_threads)}
+\begin{lstlisting}
+....
+omp_set_num_threads(num_threads);
+	pTime_1 = omp_get_wtime();
+	#pragma omp parallel sections
+	{
+		#pragma omp section
+		{
+		pSum = parallelSum(list,size);
+		}
+		#pragma omp section
+		{
+		pAvg = parallelAvg(list,size);
+		}
+		#pragma omp section
+		{
+		pMin = parallelMin(list,size);
+		}
+		#pragma omp section
+		{
+		pMax = parallelMax(list,size);
+		}
+	}
+	pTime_2 = omp_get_wtime();
+	pTime_tot = pTime_2 - pTime_1;
+...
+				
+\end{lstlisting}
+\paragraph{}
+The "\textbf{Sections}" directive is used here to indicate to the compiler that worksharing is possible. Each function can be done in parallel as they are completely independent of one another. Although this may create slight overhead when dealing with small one dimensional arrays, larger data sets should have significant speedup.
+
+%------------------------------------------------------------------------------------------------------------------------
+\clearpage
+\bigskip
+\par{}
+\textbf{Function: double parallelSum(double list[], int size)}
+\begin{lstlisting}
+{
+       	double sum = 0;
+        int i;
+	#pragma omp parallel for private(i) 
+			schedule(static) 
+			reduction(+:sum)
+	for (i = 0; i < size; i++)
+        {
+                 sum = sum + list[i];
+        }
+        return sum;
+}				
+\end{lstlisting}
+
+\paragraph{}
+Here, the same method is used for both the sum and average functions. The "\textbf{for}" directive is used to indicate that the for loop below the directive should be completed in parallel, keeping the variable \textbf{(i)} private. The "\textbf{schedule(static)}" clause is used to indicate that each thread should handle equal amounts of chunks of the iterations which will improve computation speeds when dealing with a large amount of iterations, where the chunks are left to be decided by the compiler. Synchronization is then held here with the "\textbf{reduction}" clause on the variable \textbf{sum} with operator \textbf{+}, which removes any race conditions on it.
+
+%------------------------------------------------------------------------------------------------------------------------
+\bigskip
+\par{}
+\textbf{double parallelMax(double list[], int size)}
+\begin{lstlisting}
+{
+        int max = -1*INT_MAX;
+        int i = 0;
+	#pragma omp parallel for private(i) schedule(static)
+        for (i = 0; i < size; i++)
+        {
+                if(list[i] > max)
+                {
+		#pragma omp critical
+                        max = list[i];
+                }
+        }
+        return max;
+}		
+\end{lstlisting}
+\paragraph{}
+Again, the same clauses and directives were used in both the Max and Min calculations. The "\textbf{for}" directive and "\textbf{schedule(static)}" clause serve the same purpose as it did in the sum and average functions, however, synchronization is added with the "\textbf{critical}" directive here to ensure the correct answer is achieved.
+
+\section{Results and Discussion}
+
+\begin{table}[ht]
+\centering
+\caption{Results for Array Length of 10'000 elements}
+\begin{tabular}{c c c c}
+\\\hline
+Num Threads &  Serial Time(s) & Parallel Time(s) & Approximate Speedup \\[0.5ex]
+\hline
+\\
+2 &0.00012147&0.00013950&0.87 x\\
+4 &0.00011011&0.00184180&0.06 x\\
+8 &0.00012160&0.00574700&0.02 x\\
+16 &0.00011017&0.00028292&0.39 x\\
+\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\caption{Results for Array Length of 100'000 elements}
+\begin{tabular}{c c c c}
+\\\hline
+Num Threads &  Serial Time(s) & Parallel Time(s) & Approximate Speedup \\[0.5ex]
+\hline
+\\
+2 &0.0012123&0.00062780&1.93 x\\
+4 &0.0012095&0.00052643&2.30 x\\
+8 &0.0012226&0.00349340&0.35 x\\
+16 & 0.0012107&0.00057705&2.10 x\\
+\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\caption{Results for Array Length of 1'000'000 elements}
+\begin{tabular}{c c c c}
+\\\hline
+Num Threads &  Serial Time(s) & Parallel Time(s) & Approximate Speedup \\[0.5ex]
+\hline
+\\
+2 & 0.011584&0.0058316&1.99 x\\
+4 & 0.011531&0.0033732&3.42 x\\
+8 & 0.011658&0.0057787&2.02 x\\
+16 & 0.011968&0.0034762&3.44 x\\
+\\
+\hline
+\end{tabular}
+\end{table}
+
+\paragraph{}
+These results indicate that the program experiences significant overhead when using multiple threads on the smallest data set with such a trivial task for a CPU. This is most likely due to threads being created and remaining idle. However, significant speedup is observed as the size of the data set is increased, where the overhead observed in the first table is far outweighed by the performance improvement of parallelizing the serial code, in some cases nearly achieving a 3.5x speedup.
+
+
+\newpage
+\end{document}
