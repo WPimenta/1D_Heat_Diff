@@ -130,7 +130,7 @@ int main(void)
 		
 		//Set up the timing for the serial version and calcuate the heat diffusion on the CPU
 		clock_t start = clock(), diff;
-		DiffuseHeat(currentPoints, nextPoints, DX, DT, ENDTIME);
+		DiffuseHeatCPU(currentPoints, nextPoints, DX, DT, ENDTIME);
 		diff = clock() - start;
 		int timeSerial = diff * 1000 / CLOCKS_PER_SEC;
 		
