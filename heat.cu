@@ -14,21 +14,20 @@ __device__ void PrintPointsGPU(float* array, int size, double currentTime);
 void PrintPointsCPU(float* array, double currentTime);
 void ProcessOutput(float* array, int testCase, float time);
 
-__global__ void DiffuseHeat(float* currentPoints, float* nextPoints, int size, double dx, double dt, double endTime)
+__global__ void DiffuseHeat(float* currentPoints, float* nextPoints, const size_t size, double dx, double dt, const size_t endTime)
 {
 	unsigned int threadIndex = (threadIdx.x + blockDim.x * blockIdx.x) + 1;
-	__shared__ double currentTime;
-	currentTime = 0.0;
-	while (currentTime < endTime)
-	{
-		nextPoints[threadIndex] = currentPoints[threadIndex] + 0.25*(currentPoints[threadIndex+1] - (2*currentPoints[threadIndex]) + currentPoints[threadIndex-1]);
-		__syncthreads();
-		currentPoints[threadIndex] = nextPoints[threadIndex];
-		if (threadIndex == 1)
+ 	double currentTime = 0.0;
+	if (threadIndex > 0 && threadIndex < size-1)
+	{	
+		while (currentTime < endTime)
 		{
+			nextPoints[threadIndex] = currentPoints[threadIndex] + 0.25*(currentPoints[threadIndex+1] - (2*currentPoints[threadIndex]) + currentPoints[threadIndex-1]);
+			__syncthreads();
+			currentPoints[threadIndex] = nextPoints[threadIndex];
 			currentTime += dt;
+			__syncthreads();
 		}
-		__syncthreads();
 	}
 }
 int main(void)
@@ -54,6 +53,9 @@ int main(void)
 		pch = strtok (NULL, " ");
 		ENDVALUES = atof(pch);
 
+		const double endTime = ENDTIME;
+		const int size = NUMPOINTS;
+
 		float* currentPoints = 0;
 		currentPoints = (float*)malloc(NUMPOINTS*sizeof(float));
 		float* nextPoints = 0;
@@ -76,15 +78,16 @@ int main(void)
 		currentPoints[NUMPOINTS-1] = ENDVALUES;
 		cudaMemcpy(deviceCurrentPoints, currentPoints, NUMPOINTS*sizeof(float), cudaMemcpyHostToDevice);
 		cudaMemcpy(deviceNextPoints, nextPoints, NUMPOINTS*sizeof(float), cudaMemcpyHostToDevice);
-		const size_t blockSize = NUMPOINTS-2;
+		const size_t blockSize = 256;
 		size_t gridSize = (NUMPOINTS-2) / blockSize;
+		if ((NUMPOINTS-2)%blockSize) gridSize++;
 		double DX = currentPoints[1] - currentPoints[0];
 
 		cudaEvent_t launch_begin, launch_end;
 		cudaEventCreate(&launch_begin);
 		cudaEventCreate(&launch_end);
 		cudaEventRecord(launch_begin,0);
-		DiffuseHeat<<<gridSize, blockSize>>>(deviceCurrentPoints, deviceNextPoints, NUMPOINTS, DX, DT, ENDTIME);
+		DiffuseHeat<<<gridSize, blockSize>>>(deviceCurrentPoints, deviceNextPoints, size, DX, DT, endTime);
 		cudaEventRecord(launch_end,0);
 		cudaEventSynchronize(launch_end);
 		float time = 0;
