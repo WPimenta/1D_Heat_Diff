@@ -1,0 +1,19 @@
+#!/bin/sh
+### Set the job name
+#PBS -N Cuda
+### Declare job non-rerunable
+#PBS -r n
+### Output files
+#PBS -e /hydrahome/536705/Assignment2/cuda.err
+#PBS -o /hydrahome/536705/Assignment2/cuda.log
+#pbs -l walltime=0:10:10
+### Queue name (batch)
+#PBS -q batch
+### Request 1 node
+#PBS -l nodes=6
+
+
+./heat_cuda
+
+
+
